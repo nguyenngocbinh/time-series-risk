@@ -1,0 +1,5 @@
+theme: minima
+title: Time Series Risk
+description: A structured collection of Jupyter notebooks covering time series analysis and financial risk modeling.
+url: "https://nguyenngocbinh.github.io"
+baseurl: "/time-series-risk"
