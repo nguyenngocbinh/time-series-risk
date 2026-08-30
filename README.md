@@ -42,6 +42,10 @@ Trang web dùng sidebar navigation, methodology cards, model map và interactive
 ## 🧭 Methodology Documentation
 
 - [Foundations: Time Series, Returns & Stationarity](docs/foundations/index.html)
+- [Volatility Models: ARCH, GARCH & Forecasting](docs/volatility-models/index.html)
+- [Mean Models: ARIMA, VAR & VECM](docs/mean-models/index.html)
+- [Multivariate: VAR-GARCH & Portfolio Dependence](docs/multivariate/index.html)
+- [Risk Measures: VaR, Expected Shortfall & Backtesting](docs/risk-measures/index.html)
 - [Authoring & AI instructions](docs/INSTRUCTIONS.md)
 - [Methodology map & roadmap](docs/methodology-map.md)
 
