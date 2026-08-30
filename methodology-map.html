@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Methodology Map | Time Series Risk</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Methodology Map" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A structured collection of Jupyter notebooks covering time series analysis and financial risk modeling." />
+<meta property="og:description" content="A structured collection of Jupyter notebooks covering time series analysis and financial risk modeling." />
+<link rel="canonical" href="https://nguyenngocbinh.github.io/time-series-risk/methodology-map.html" />
+<meta property="og:url" content="https://nguyenngocbinh.github.io/time-series-risk/methodology-map.html" />
+<meta property="og:site_name" content="Time Series Risk" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Methodology Map" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A structured collection of Jupyter notebooks covering time series analysis and financial risk modeling.","headline":"Methodology Map","url":"https://nguyenngocbinh.github.io/time-series-risk/methodology-map.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/time-series-risk/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://nguyenngocbinh.github.io/time-series-risk/feed.xml" title="Time Series Risk" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/time-series-risk/">Time Series Risk</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/time-series-risk/">Home</a><a class="page-link" href="/time-series-risk/INSTRUCTIONS.html">Time Series Risk Lab — Authoring Instructions</a><a class="page-link" href="/time-series-risk/methodology-map.html">Methodology Map</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Methodology Map</h1>
+  </header>
+
+  <div class="post-content">
+    <h1 id="methodology-map">Methodology Map</h1>
+
+<h2 id="learning-path">Learning path</h2>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Time Series
+    ↓
+Data &amp; Returns
+    ↓
+Stationarity
+    ↓
+Mean Model
+ ┌──┴───────────┐
+ARIMA        VAR/VECM
+ └──┬───────────┘
+    ↓
+Residual Diagnostics
+    ↓
+ARCH Effect?
+    ↓
+Volatility Model
+ ┌──┼──────────────┐
+GARCH  EGARCH  GJR-GARCH
+ └──┬──────────────┘
+    ↓
+Multivariate Volatility
+    ↓
+VaR / Expected Shortfall
+    ↓
+Backtesting
+    ↓
+Stress Testing
+    ↓
+Model Risk &amp; Governance
+</code></pre></div></div>
+
+<h2 id="question-driven-structure">Question-driven structure</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Topic</th>
+      <th>Câu hỏi trung tâm</th>
+      <th>Output</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Time Series</td>
+      <td>Chuỗi thời gian khác dữ liệu cross-section như thế nào?</td>
+      <td>Data intuition</td>
+    </tr>
+    <tr>
+      <td>Returns</td>
+      <td>Vì sao financial modeling thường dùng return?</td>
+      <td>Return series</td>
+    </tr>
+    <tr>
+      <td>Stationarity</td>
+      <td>Chuỗi có dừng không và vì sao cần biết?</td>
+      <td>Transformation decision</td>
+    </tr>
+    <tr>
+      <td>ARIMA</td>
+      <td>Có thể mô hình hóa conditional mean như thế nào?</td>
+      <td>Mean forecast</td>
+    </tr>
+    <tr>
+      <td>VAR</td>
+      <td>Các biến kinh tế tác động động lẫn nhau ra sao?</td>
+      <td>IRF/FEVD/forecast</td>
+    </tr>
+    <tr>
+      <td>VECM</td>
+      <td>Các biến non-stationary có quan hệ dài hạn không?</td>
+      <td>Long-run dynamics</td>
+    </tr>
+    <tr>
+      <td>ARCH</td>
+      <td>Volatility có phụ thuộc vào shock quá khứ không?</td>
+      <td>ARCH evidence</td>
+    </tr>
+    <tr>
+      <td>GARCH</td>
+      <td>Volatility clustering được mô hình hóa thế nào?</td>
+      <td>Conditional volatility</td>
+    </tr>
+    <tr>
+      <td>EGARCH/GJR</td>
+      <td>Shock âm và dương có tác động khác nhau không?</td>
+      <td>Asymmetric volatility</td>
+    </tr>
+    <tr>
+      <td>DCC-GARCH</td>
+      <td>Correlation giữa các tài sản thay đổi thế nào?</td>
+      <td>Dynamic covariance</td>
+    </tr>
+    <tr>
+      <td>VaR</td>
+      <td>Mức lỗ cực đoan tại confidence level là bao nhiêu?</td>
+      <td>VaR</td>
+    </tr>
+    <tr>
+      <td>ES</td>
+      <td>Khi vượt VaR, mức lỗ kỳ vọng là bao nhiêu?</td>
+      <td>ES</td>
+    </tr>
+    <tr>
+      <td>Backtesting</td>
+      <td>Model dự báo risk có đáng tin không?</td>
+      <td>Validation decision</td>
+    </tr>
+    <tr>
+      <td>Stress Testing</td>
+      <td>Điều gì xảy ra trong scenario cực đoan?</td>
+      <td>Stress loss</td>
+    </tr>
+    <tr>
+      <td>Governance</td>
+      <td>Model có thể được sử dụng và giám sát như thế nào?</td>
+      <td>Model lifecycle</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="content-roadmap">Content roadmap</h2>
+
+<h3 id="phase-1--foundation">Phase 1 — Foundation</h3>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Time Series</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Returns &amp; Log Returns</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Stationarity</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ADF / KPSS</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Differencing</li>
+</ul>
+
+<h3 id="phase-2--mean-models">Phase 2 — Mean Models</h3>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ARIMA</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />VAR</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Lag selection</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />VAR stability</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Granger causality</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />IRF</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />FEVD</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Cointegration</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />VECM</li>
+</ul>
+
+<h3 id="phase-3--volatility">Phase 3 — Volatility</h3>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ARCH effect</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ARCH</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />GARCH(1,1)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Distribution selection</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />EGARCH</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />GJR-GARCH</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Volatility forecast</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Residual diagnostics</li>
+</ul>
+
+<h3 id="phase-4--risk">Phase 4 — Risk</h3>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Historical VaR</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Parametric VaR</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />GARCH VaR</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Filtered Historical Simulation</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Expected Shortfall</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />VaR backtesting</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />ES validation</li>
+</ul>
+
+<h3 id="phase-5--advanced-risk">Phase 5 — Advanced Risk</h3>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />DCC-GARCH</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />BEKK</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Portfolio volatility</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Stress testing</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Scenario analysis</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Model risk</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Governance</li>
+</ul>
+
+<h3 id="phase-6--integrated-case-study">Phase 6 — Integrated Case Study</h3>
+
+<p>Một case study phải đi xuyên suốt:</p>
+
+<p><code class="language-plaintext highlighter-rouge">Data → Stationarity → Mean Model → Volatility → Forecast → VaR/ES → Backtesting → Stress → Final Model Selection</code>.</p>
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/time-series-risk/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Time Series Risk</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Time Series Risk</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>A structured collection of Jupyter notebooks covering time series analysis and financial risk modeling.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

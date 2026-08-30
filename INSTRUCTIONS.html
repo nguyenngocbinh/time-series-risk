@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Time Series Risk Lab — Authoring Instructions | Time Series Risk</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Time Series Risk Lab — Authoring Instructions" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A structured collection of Jupyter notebooks covering time series analysis and financial risk modeling." />
+<meta property="og:description" content="A structured collection of Jupyter notebooks covering time series analysis and financial risk modeling." />
+<link rel="canonical" href="https://nguyenngocbinh.github.io/time-series-risk/INSTRUCTIONS.html" />
+<meta property="og:url" content="https://nguyenngocbinh.github.io/time-series-risk/INSTRUCTIONS.html" />
+<meta property="og:site_name" content="Time Series Risk" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Time Series Risk Lab — Authoring Instructions" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"A structured collection of Jupyter notebooks covering time series analysis and financial risk modeling.","headline":"Time Series Risk Lab — Authoring Instructions","url":"https://nguyenngocbinh.github.io/time-series-risk/INSTRUCTIONS.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/time-series-risk/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://nguyenngocbinh.github.io/time-series-risk/feed.xml" title="Time Series Risk" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/time-series-risk/">Time Series Risk</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/time-series-risk/">Home</a><a class="page-link" href="/time-series-risk/INSTRUCTIONS.html">Time Series Risk Lab — Authoring Instructions</a><a class="page-link" href="/time-series-risk/methodology-map.html">Methodology Map</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Time Series Risk Lab — Authoring Instructions</h1>
+  </header>
+
+  <div class="post-content">
+    <h1 id="time-series-risk-lab--authoring-instructions">Time Series Risk Lab — Authoring Instructions</h1>
+
+<h2 id="1-mục-tiêu">1. Mục tiêu</h2>
+
+<p><code class="language-plaintext highlighter-rouge">time-series-risk</code> là tài liệu phương pháp luận tương tác về Time Series, Financial Econometrics và Risk Modeling. Website phải giúp người đọc trả lời câu hỏi nghiệp vụ trước khi đi vào code.</p>
+
+<p>Nguyên tắc cốt lõi:</p>
+
+<blockquote>
+  <p><strong>Câu hỏi → Trực giác → Công thức → Giả định → Phương pháp → Chẩn đoán → Validation → Diễn giải → Limitations</strong></p>
+</blockquote>
+
+<p>Notebook là lớp thực hành và kiểm chứng; website là lớp kiến thức và phương pháp luận.</p>
+
+<h2 id="2-ngôn-ngữ">2. Ngôn ngữ</h2>
+
+<ul>
+  <li>Nội dung chính: tiếng Việt.</li>
+  <li>Giữ thuật ngữ tiếng Anh chuẩn trong ngoặc khi cần: stationarity, volatility clustering, conditional variance, backtesting…</li>
+  <li>Công thức dùng LaTeX.</li>
+  <li>Không dịch máy móc thuật ngữ econometrics.</li>
+  <li>Không biến trang thành bản dịch giáo trình dài; ưu tiên notes, cards, câu hỏi và ví dụ.</li>
+</ul>
+
+<h2 id="3-template-bắt-buộc-cho-một-topic">3. Template bắt buộc cho một topic</h2>
+
+<p>Mỗi topic nên có các khối:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">❓ Câu hỏi chính</code> — vấn đề model giải quyết.</li>
+  <li><code class="language-plaintext highlighter-rouge">💡 Key Idea</code> — câu trả lời 2–5 dòng.</li>
+  <li><code class="language-plaintext highlighter-rouge">📐 Công thức</code> — mathematical formulation.</li>
+  <li><code class="language-plaintext highlighter-rouge">🧠 Trực giác</code> — giải thích bằng ngôn ngữ đời thường/nghiệp vụ.</li>
+  <li><code class="language-plaintext highlighter-rouge">📋 Giả định</code> — assumptions và điều kiện áp dụng.</li>
+  <li><code class="language-plaintext highlighter-rouge">🎛️ Interactive</code> — slider/simulation/chart nếu topic phù hợp.</li>
+  <li><code class="language-plaintext highlighter-rouge">🔍 Diagnostics</code> — test và điều kiện chấp nhận.</li>
+  <li><code class="language-plaintext highlighter-rouge">⚖️ Model Selection</code> — model alternatives và tiêu chí chọn.</li>
+  <li><code class="language-plaintext highlighter-rouge">💰 Risk Application</code> — ứng dụng trong risk.</li>
+  <li><code class="language-plaintext highlighter-rouge">⚠️ Common Mistakes</code> — lỗi phổ biến.</li>
+  <li><code class="language-plaintext highlighter-rouge">📊 Out-of-Sample</code> — validation nếu có forecasting.</li>
+  <li><code class="language-plaintext highlighter-rouge">📚 References</code> — nguồn học thuật.</li>
+  <li><code class="language-plaintext highlighter-rouge">🐍 Python Notebook</code> — link tới notebook tương ứng.</li>
+</ol>
+
+<h2 id="4-quy-tắc-methodology">4. Quy tắc methodology</h2>
+
+<p>Không được kết luận model tốt chỉ vì AIC/BIC thấp.</p>
+
+<p>Luôn phân biệt:</p>
+<ul>
+  <li>in-sample fit và out-of-sample performance;</li>
+  <li>statistical significance và economic significance;</li>
+  <li>correlation và causality;</li>
+  <li>forecast và stress scenario;</li>
+  <li>VaR và Expected Shortfall.</li>
+</ul>
+
+<p>Với volatility model, tối thiểu xem xét:</p>
+<ul>
+  <li>ARCH-LM;</li>
+  <li>Ljung-Box residuals;</li>
+  <li>Ljung-Box squared residuals;</li>
+  <li>standardized residuals;</li>
+  <li>distribution/tail behavior;</li>
+  <li>volatility forecast;</li>
+  <li>VaR/ES backtesting khi model được dùng cho risk.</li>
+</ul>
+
+<p>Với VAR/VECM, xem xét:</p>
+<ul>
+  <li>stationarity/cointegration;</li>
+  <li>lag selection;</li>
+  <li>stability;</li>
+  <li>residual diagnostics;</li>
+  <li>Granger causality;</li>
+  <li>IRF;</li>
+  <li>FEVD;</li>
+  <li>out-of-sample forecast.</li>
+</ul>
+
+<h2 id="5-interactive-visualization">5. Interactive visualization</h2>
+
+<p>Chỉ dùng visualization khi nó giúp trả lời câu hỏi. Không thêm chart để trang trí.</p>
+
+<p>Ưu tiên:</p>
+<ul>
+  <li>volatility path;</li>
+  <li>ACF/PACF;</li>
+  <li>impulse response;</li>
+  <li>correlation matrix;</li>
+  <li>VaR threshold và exceptions;</li>
+  <li>parameter sensitivity;</li>
+  <li>rolling forecast.</li>
+</ul>
+
+<p>Các chart phải có:</p>
+<ul>
+  <li>title;</li>
+  <li>đơn vị;</li>
+  <li>trục rõ ràng;</li>
+  <li>chú thích ngắn;</li>
+  <li>explanation về ý nghĩa risk.</li>
+</ul>
+
+<h2 id="6-ui-conventions">6. UI conventions</h2>
+
+<ul>
+  <li>Dark analytical dashboard.</li>
+  <li>Sidebar cho navigation.</li>
+  <li>Main area cho lesson.</li>
+  <li>Right rail cho notes, references và warnings.</li>
+  <li>Cards dùng cho các ý độc lập.</li>
+  <li>Không đặt quá nhiều chữ trong một card.</li>
+  <li>Responsive cho desktop/tablet/mobile.</li>
+  <li>Màu chỉ dùng để biểu thị trạng thái/ý nghĩa: success, warning, risk, selected.</li>
+</ul>
+
+<h2 id="7-cấu-trúc-module">7. Cấu trúc module</h2>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Foundations
+  Time Series
+  Returns
+  Stationarity
+
+Mean Models
+  ARIMA
+  VAR
+  VECM
+
+Volatility Models
+  ARCH
+  GARCH
+  EGARCH
+  GJR-GARCH
+
+Multivariate
+  DCC-GARCH
+  BEKK
+  Dynamic Correlation
+
+Risk Measures
+  VaR
+  Expected Shortfall
+  Backtesting
+
+Advanced
+  Stress Testing
+  Scenario Analysis
+  Model Risk &amp; Governance
+</code></pre></div></div>
+
+<h2 id="8-quy-tắc-code">8. Quy tắc code</h2>
+
+<ul>
+  <li>Không đưa API key hoặc secret vào repository.</li>
+  <li>JavaScript phải progressive enhancement: nếu chart không chạy, nội dung lý thuyết vẫn đọc được.</li>
+  <li>Không phụ thuộc backend cho các trang documentation.</li>
+  <li>Ưu tiên static GitHub Pages.</li>
+  <li>Notebook phải có link từ page tương ứng.</li>
+  <li>Tên thư mục phải phân biệt <code class="language-plaintext highlighter-rouge">VAR</code> = Vector Autoregression và <code class="language-plaintext highlighter-rouge">VaR</code> = Value at Risk. Khi cần đổi tên thư mục VaR hiện tại, dùng <code class="language-plaintext highlighter-rouge">08_value_at_risk</code> hoặc <code class="language-plaintext highlighter-rouge">risk</code> thay vì <code class="language-plaintext highlighter-rouge">07_var</code> để tránh nhầm.</li>
+</ul>
+
+<h2 id="9-definition-of-done-cho-một-topic">9. Definition of Done cho một topic</h2>
+
+<p>Một topic chỉ được xem là hoàn thành khi:</p>
+
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có câu hỏi trung tâm.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có câu trả lời ngắn.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có công thức chính.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Giải thích từng tham số.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Nêu assumptions.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Nêu khi nào dùng/không dùng.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có diagnostics.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có model selection nếu có nhiều specification.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có validation/out-of-sample nếu có forecasting.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có risk interpretation.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có limitations.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có reference.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Có link notebook.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Nội dung tiếng Việt được kiểm tra thuật ngữ.</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Không có kết quả số liệu giả được trình bày như kết quả thực tế.</li>
+</ul>
+
+<h2 id="10-prompt-chuẩn-cho-aiagent">10. Prompt chuẩn cho AI/Agent</h2>
+
+<blockquote>
+  <p>Bạn đang làm việc trong repository <code class="language-plaintext highlighter-rouge">time-series-risk</code>. Hãy bổ sung topic <code class="language-plaintext highlighter-rouge">[TOPIC]</code> theo đúng <code class="language-plaintext highlighter-rouge">docs/INSTRUCTIONS.md</code>. Viết nội dung bằng tiếng Việt theo format Question → Key Idea → Formula → Intuition → Assumptions → Methodology → Diagnostics → Model Selection → Validation → Risk Interpretation → Limitations → References → Notebook. Tạo/cập nhật HTML theo component system hiện có, giữ dark analytical dashboard, responsive và không phá vỡ navigation. Nếu topic có thể minh họa bằng simulation, thêm interactive control và chart nhưng không dùng chart chỉ để trang trí. Không thay đổi công thức hoặc kết luận thống kê nếu chưa kiểm tra tính đúng đắn. Sau khi hoàn thành, kiểm tra tất cả link tương đối tới notebook và asset.</p>
+</blockquote>
+
+<h2 id="11-review-prompt">11. Review prompt</h2>
+
+<blockquote>
+  <p>Review topic <code class="language-plaintext highlighter-rouge">[TOPIC]</code> như Senior Quantitative Risk Reviewer. Kiểm tra mathematical correctness, statistical assumptions, model specification, diagnostics, validation, interpretation, limitations, terminology và consistency với các topic khác. Liệt kê issue theo Critical/High/Medium/Low và đề xuất sửa. Không coi AIC/BIC là bằng chứng duy nhất để chọn model.</p>
+</blockquote>
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/time-series-risk/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Time Series Risk</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Time Series Risk</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>A structured collection of Jupyter notebooks covering time series analysis and financial risk modeling.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
