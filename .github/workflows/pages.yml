@@ -2,7 +2,7 @@ name: Deploy GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ["gh-pages"]
   workflow_dispatch:
 
 permissions:
@@ -18,8 +18,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout gh-pages
         uses: actions/checkout@v4
+        with:
+          ref: gh-pages
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
