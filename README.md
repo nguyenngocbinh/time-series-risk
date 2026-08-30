@@ -29,13 +29,13 @@ Trang web dùng sidebar navigation, methodology cards, model map và interactive
 
 | Module | Topic | Notebooks |
 |---|---|---|
-| [01_stationarity](01_stationarity/) | Stationarity Testing | [ADF](01_stationarity/adf.ipynb) · [KPSS](01_stationarity/kpss.ipynb) · [Differencing](01_stationarity/differencing.ipynb) |
-| [02_arima](02_arima/) | ARIMA Models | [ARIMA](02_arima/arima.ipynb) |
-| [03_var](03_var/) | Vector Autoregression | [VAR Basics](03_var/var_basic.ipynb) · [Lag Selection](03_var/lag_selection.ipynb) · [Granger Causality](03_var/granger_causality.ipynb) · [Impulse Response](03_var/impulse_response.ipynb) · [FEVD](03_var/forecast_error_variance.ipynb) |
-| [04_arch](04_arch/) | ARCH Models | [ARCH Effect](04_arch/arch_effect.ipynb) · [ARCH Model](04_arch/arch_model.ipynb) |
-| [05_garch](05_garch/) | GARCH Models | [GARCH(1,1)](05_garch/garch11.ipynb) · [EGARCH](05_garch/egarch.ipynb) · [GJR-GARCH](05_garch/gjr_garch.ipynb) · [Forecast](05_garch/garch_forecast.ipynb) |
-| [06_var_garch](06_var_garch/) | Multivariate Volatility | [VAR-GARCH](06_var_garch/multivariate_volatility.ipynb) |
-| [07_var](07_var/) | Value at Risk | [Historical VaR](07_var/historical_var.ipynb) · [Parametric VaR](07_var/parametric_var.ipynb) · [GARCH VaR](07_var/garch_var.ipynb) |
+| [notebooks/01_foundations/stationarity](notebooks/01_foundations/stationarity/) | Stationarity Testing | [ADF](notebooks/01_foundations/stationarity/adf.ipynb) · [KPSS](notebooks/01_foundations/stationarity/kpss.ipynb) · [Differencing](notebooks/01_foundations/stationarity/differencing.ipynb) |
+| [notebooks/02_mean-models/arima](notebooks/02_mean-models/arima/) | ARIMA Models | [ARIMA](notebooks/02_mean-models/arima/arima.ipynb) |
+| [notebooks/02_mean-models/vector-autoregression](notebooks/02_mean-models/vector-autoregression/) | Vector Autoregression | [VAR Basics](notebooks/02_mean-models/vector-autoregression/var_basic.ipynb) · [Lag Selection](notebooks/02_mean-models/vector-autoregression/lag_selection.ipynb) · [Granger Causality](notebooks/02_mean-models/vector-autoregression/granger_causality.ipynb) · [Impulse Response](notebooks/02_mean-models/vector-autoregression/impulse_response.ipynb) · [FEVD](notebooks/02_mean-models/vector-autoregression/forecast_error_variance.ipynb) |
+| [notebooks/03_volatility-models/arch](notebooks/03_volatility-models/arch/) | ARCH Models | [ARCH Effect](notebooks/03_volatility-models/arch/arch_effect.ipynb) · [ARCH Model](notebooks/03_volatility-models/arch/arch_model.ipynb) |
+| [notebooks/03_volatility-models/garch](notebooks/03_volatility-models/garch/) | GARCH Models | [GARCH(1,1)](notebooks/03_volatility-models/garch/garch11.ipynb) · [EGARCH](notebooks/03_volatility-models/garch/egarch.ipynb) · [GJR-GARCH](notebooks/03_volatility-models/garch/gjr_garch.ipynb) · [Forecast](notebooks/03_volatility-models/garch/garch_forecast.ipynb) |
+| [notebooks/04_multivariate/var-garch](notebooks/04_multivariate/var-garch/) | Multivariate Volatility | [VAR-GARCH](notebooks/04_multivariate/var-garch/multivariate_volatility.ipynb) |
+| [notebooks/05_risk-measures/value-at-risk](notebooks/05_risk-measures/value-at-risk/) | Value at Risk | [Historical VaR](notebooks/05_risk-measures/value-at-risk/historical_var.ipynb) · [Parametric VaR](notebooks/05_risk-measures/value-at-risk/parametric_var.ipynb) · [GARCH VaR](notebooks/05_risk-measures/value-at-risk/garch_var.ipynb) |
 
 > **Naming note:** `VAR` means Vector Autoregression; `VaR` means Value at Risk. Future web pages should use the full names when ambiguity is possible.
 
@@ -68,20 +68,35 @@ For the web layer, open `docs/index.html` directly or serve `docs/` with any sta
 
 ```text
 time-series-risk/
-├── 01_stationarity/
-├── 02_arima/
-├── 03_var/
-├── 04_arch/
-├── 05_garch/
-├── 06_var_garch/
-├── 07_var/
-├── docs/
-│   ├── index.html
-│   ├── INSTRUCTIONS.md
-│   ├── methodology-map.md
-│   └── assets/
-│       ├── css/lab.css
-│       └── js/lab.js
+├── docs/                         # Static documentation and GitHub Pages
+│   ├── foundations/
+│   ├── mean-models/
+│   ├── volatility-models/
+│   ├── multivariate/
+│   ├── risk-measures/
+│   ├── assets/
+│   └── index.html
+├── notebooks/
+│   ├── 01_foundations/stationarity/
+│   ├── 02_mean-models/
+│   │   ├── arima/
+│   │   ├── vector-autoregression/
+│   │   └── vecm/
+│   ├── 03_volatility-models/
+│   │   ├── arch/
+│   │   └── garch/
+│   ├── 04_multivariate/var-garch/
+│   └── 05_risk-measures/value-at-risk/
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   └── README.md
+├── src/
+│   ├── data/
+│   ├── diagnostics/
+│   ├── models/
+│   └── risk/
+├── tests/
 └── README.md
 ```
 

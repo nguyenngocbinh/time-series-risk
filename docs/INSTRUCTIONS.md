@@ -138,8 +138,8 @@ Advanced
 - JavaScript phải progressive enhancement: nếu chart không chạy, nội dung lý thuyết vẫn đọc được.
 - Không phụ thuộc backend cho các trang documentation.
 - Ưu tiên static GitHub Pages.
-- Notebook phải có link từ page tương ứng.
-- Tên thư mục phải phân biệt `VAR` = Vector Autoregression và `VaR` = Value at Risk. Khi cần đổi tên thư mục VaR hiện tại, dùng `08_value_at_risk` hoặc `risk` thay vì `07_var` để tránh nhầm.
+- Notebook phải có link từ page tương ứng, theo cấu trúc `notebooks/<phase>/<topic>/`.
+- Tên thư mục phải phân biệt `VAR` = Vector Autoregression và `VaR` = Value at Risk. Dùng `vector-autoregression` và `value-at-risk` thay vì tên viết tắt mơ hồ.
 
 ## 9. Definition of Done cho một topic
 
