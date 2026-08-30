@@ -18,6 +18,45 @@
     .flow > span { padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; background: #0b1728; }
     .flow .arrow { border: 0; background: transparent; color: var(--muted); padding: 9px 0; }
     .next-card { border-left: 3px solid var(--yellow); }
+
+    .model-map-wrap { margin-top: 22px; }
+    .model-map-head { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:14px; }
+    .model-map-head h3 { margin:0 0 5px; }
+    .model-map-head p { margin:0; color:var(--muted); }
+    .model-map-layout { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:14px; }
+    .model-map { min-width:0; overflow:auto; padding:24px; position:relative; }
+    .map-lane { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .map-node { width:100%; appearance:none; color:var(--text); text-align:left; cursor:pointer; padding:14px; border:1px solid var(--border); border-radius:12px; background:linear-gradient(145deg,rgba(14,28,47,.95),rgba(8,18,31,.95)); transition:.16s ease; }
+    .map-node:hover,.map-node:focus-visible { border-color:var(--cyan); transform:translateY(-1px); outline:none; }
+    .map-node.selected { border-color:var(--accent); box-shadow:0 0 0 1px rgba(139,92,246,.22),0 10px 28px rgba(54,36,102,.2); }
+    .map-node strong { display:block; font-size:14px; }
+    .map-node small { display:block; margin-top:3px; color:var(--muted); }
+    .map-top { max-width:320px; margin:0 auto 16px; }
+    .map-category { min-height:110px; }
+    .map-category.mean { border-color:rgba(52,211,153,.55); }
+    .map-category.vol { border-color:rgba(139,92,246,.55); }
+    .map-models { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:10px; }
+    .map-models .map-node { min-height:88px; }
+    .map-connector { text-align:center; color:#60748f; padding:9px 0; font-size:18px; }
+    .map-flow { max-width:430px; margin:14px auto 0; display:flex; flex-direction:column; align-items:stretch; gap:8px; }
+    .map-flow .map-node { text-align:center; }
+    .map-flow .risk { border-color:rgba(251,191,36,.55); }
+    .map-flow .output { border-color:rgba(56,189,248,.55); }
+    .map-detail { display:flex; flex-direction:column; gap:12px; }
+    .map-detail .selected-label { color:var(--accent); font-size:11px; letter-spacing:.08em; font-weight:800; }
+    .map-detail h4 { margin:0; font-size:20px; }
+    .map-detail p { margin:0; color:var(--muted); }
+    .map-detail .btn { text-decoration:none; text-align:center; }
+    .map-help { font-size:12px; color:var(--muted); margin-top:10px; }
+    .map-legend { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+    .map-legend span { font-size:11px; color:var(--muted); }
+    .legend-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; }
+    .legend-input { background:var(--cyan); }
+    .legend-mean { background:var(--green); }
+    .legend-vol { background:var(--accent); }
+    .legend-risk { background:var(--yellow); }
+    @media (max-width:900px) { .model-map-layout{grid-template-columns:1fr}.map-detail{display:grid;grid-template-columns:1fr 1fr}.map-detail .btn{grid-column:1/-1} }
+    @media (max-width:760px) { .model-map{padding:16px}.map-lane{grid-template-columns:1fr}.map-models{grid-template-columns:1fr}.model-map-head{display:block}.map-detail{display:block}.map-detail .btn{display:block;margin-top:10px} }
   </style>
 </head>
 <body>
@@ -28,6 +67,11 @@
         <div><h1>TIME SERIES <span>RISK LAB</span></h1><small>Econometrics • Volatility • VaR</small></div>
       </a>
       <nav class="nav" aria-label="Main navigation">
+        <div class="nav-group">
+          <div class="nav-title">OVERVIEW</div>
+          <a href="index.html">Home</a>
+          <a class="active" href="#model-map">Model Map</a>
+        </div>
         <div class="nav-group">
           <div class="nav-title">FOUNDATIONS</div>
           <a href="foundations/">Time Series · Returns · Stationarity</a>
@@ -60,7 +104,7 @@
     <main class="main">
       <div class="topbar">
         <button class="btn mobile-menu" aria-label="Mở điều hướng">☰</button>
-        <div class="crumb">Time Series Risk Lab › Home</div>
+        <div class="crumb"><a href="index.html" style="color:inherit;text-decoration:none">Time Series Risk Lab</a> › Model Map</div>
         <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk">⌘ Repository</a>
       </div>
 
@@ -85,6 +129,65 @@
           <h3 class="warning">⚠️ Risk needs validation</h3>
           <p>Không coi AIC/BIC hoặc một p-value là bằng chứng đầy đủ để dùng model cho risk.</p>
         </article>
+      </section>
+
+      <section id="model-map" class="card model-map-wrap">
+        <div class="model-map-head">
+          <div>
+            <div class="tag">MODEL MAP</div>
+            <h3>Models → Forecast → Risk</h3>
+            <p>Khám phá cách các model nối với nhau trong một risk workflow.</p>
+          </div>
+        </div>
+        <div class="model-map-layout">
+          <div>
+            <div class="model-map" data-model-map aria-label="Interactive time series risk model map">
+              <button class="map-node map-top" data-model="time-series"><strong>TIME SERIES</strong><small>Data &amp; returns</small></button>
+              <div class="map-connector">↓</div>
+              <div class="map-lane">
+                <div>
+                  <button class="map-node map-category mean" data-model="mean-dynamics"><strong>MEAN DYNAMICS</strong><small>Model predictable mean structure</small></button>
+                  <div class="map-models">
+                    <button class="map-node" data-model="arima"><strong>ARIMA</strong><small>Univariate dynamics</small></button>
+                    <button class="map-node" data-model="var"><strong>VAR</strong><small>Multivariate dynamics</small></button>
+                    <button class="map-node" data-model="vecm"><strong>VECM</strong><small>Long-run equilibrium</small></button>
+                  </div>
+                </div>
+                <div>
+                  <button class="map-node map-category vol" data-model="volatility"><strong>VOLATILITY</strong><small>Model conditional variance</small></button>
+                  <div class="map-models">
+                    <button class="map-node" data-model="arch"><strong>ARCH</strong><small>Lagged squared shocks</small></button>
+                    <button class="map-node" data-model="garch"><strong>GARCH</strong><small>Shocks + variance persistence</small></button>
+                    <button class="map-node" data-model="egarch"><strong>EGARCH</strong><small>Asymmetric response</small></button>
+                  </div>
+                </div>
+              </div>
+              <div class="map-flow">
+                <div class="map-connector">↓</div>
+                <button class="map-node" data-model="forecast"><strong>VOLATILITY FORECAST</strong><small>Forecast future conditional volatility</small></button>
+                <div class="map-connector">↓</div>
+                <button class="map-node risk" data-model="risk"><strong>RISK MEASURES</strong><small>VaR · Expected Shortfall</small></button>
+                <div class="map-connector">↓</div>
+                <button class="map-node output" data-model="backtest"><strong>BACKTESTING</strong><small>Evaluate realized exceptions and performance</small></button>
+                <div class="map-connector">↓</div>
+                <button class="map-node output" data-model="decision"><strong>RISK DECISION</strong><small>Interpret with limitations and governance</small></button>
+              </div>
+            </div>
+            <div class="map-legend">
+              <span><i class="legend-dot legend-input"></i>Input / data</span>
+              <span><i class="legend-dot legend-mean"></i>Mean models</span>
+              <span><i class="legend-dot legend-vol"></i>Volatility</span>
+              <span><i class="legend-dot legend-risk"></i>Risk measures</span>
+            </div>
+            <div class="map-help">Click any node to inspect its role and jump to the corresponding topic.</div>
+          </div>
+          <aside class="card map-detail" data-model-detail>
+            <div class="selected-label">SELECTED MODEL</div>
+            <h4 data-model-name>GARCH</h4>
+            <p data-model-description>Generalized ARCH: volatility phụ thuộc vào cả shocks và variance trong quá khứ.</p>
+            <a class="btn" data-model-link href="volatility-models/#garch">Mở GARCH →</a>
+          </aside>
+        </div>
       </section>
 
       <section class="overview">
@@ -146,14 +249,9 @@
         <p class="muted">Bắt đầu từ Foundations để xác định đúng series và transformation, trước khi fit mean hoặc volatility model.</p>
       </article>
       <article class="card">
-        <h3>🎯 Current modules</h3>
-        <ol class="list">
-          <li>Foundations</li>
-          <li>Mean Models</li>
-          <li>Volatility Models</li>
-          <li>Multivariate</li>
-          <li>Risk Measures</li>
-        </ol>
+        <h3>🎯 Model Map</h3>
+        <p class="muted">GARCH là điểm nối quan trọng từ volatility modeling sang forecasting, VaR/ES và backtesting.</p>
+        <a class="btn" href="#model-map">Xem Model Map ↑</a>
       </article>
       <article class="card">
         <h3>📖 Documentation</h3>
@@ -167,5 +265,6 @@
       document.querySelector(".sidebar").classList.toggle("open");
     });
   </script>
+  <script src="assets/js/model-map.js"></script>
 </body>
 </html>
