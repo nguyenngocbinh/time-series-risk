@@ -24,5 +24,8 @@
     nav.append(link);
   }
 
-  document.querySelector(".topbar")?.insertAdjacentElement("afterend", nav);
+  const topbar = document.querySelector(".topbar");
+  if (topbar) {
+    topbar.insertAdjacentElement("afterend", nav);
+  }
 })();
