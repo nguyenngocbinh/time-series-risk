@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ARCH, GARCH, asymmetric volatility, diagnostics, and volatility forecasting for financial risk modeling.">
+  <title>Volatility Models | Time Series Risk Lab</title>
+  <link rel="stylesheet" href="../assets/css/lab.css">
+  <style>
+    .nav-note { color: var(--muted); font-size: 12px; padding: 0 10px; }
+    .section { scroll-margin-top: 18px; margin-top: 28px; }
+    .section-heading { margin: 0 0 14px; font-size: 22px; }
+    .section-heading span { color: var(--cyan); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; vertical-align: top; }
+    th { color: #c4b5fd; font-size: 12px; letter-spacing: .03em; }
+    .decision { border-left: 3px solid var(--accent); }
+    .decision.good { border-left-color: var(--green); }
+    .decision.warn { border-left-color: var(--yellow); }
+    .decision.risk { border-left-color: var(--red); }
+    .callout { margin-top: 14px; }
+    .lesson-links a { display: block; margin: 8px 0; }
+    .mini-formula { font: 18px/1.5 "STIX Two Math", "Cambria Math", serif; color: #ddd6fe; }
+    .flow { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; }
+    .flow > span { padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: #0b1728; }
+    .flow .arrow { border: 0; background: transparent; color: var(--muted); padding: 8px 0; }
+    @media (max-width: 760px) { .section-heading { font-size: 20px; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html" aria-label="Time Series Risk Lab home">
+        <div class="brand-mark">〽</div>
+        <div>
+          <h1>TIME SERIES <span>RISK LAB</span></h1>
+          <small>Econometrics • Volatility • VaR</small>
+        </div>
+      </a>
+      <nav class="nav" aria-label="Volatility Models navigation">
+        <div class="nav-group">
+          <div class="nav-title">VOLATILITY MODELS</div>
+          <a class="active" href="#arch-effect">ARCH Effect</a>
+          <a href="#arch">ARCH</a>
+          <a href="#garch">GARCH (1,1)</a>
+          <a href="#asymmetry">EGARCH &amp; GJR-GARCH</a>
+          <a href="#diagnostics">Diagnostics</a>
+          <a href="#forecasting">Forecasting</a>
+        </div>
+        <div class="nav-group">
+          <div class="nav-title">LEARNING PATH</div>
+          <a href="../foundations/">Foundations</a>
+          <span class="nav-note">Mean Models · coming next</span>
+          <span class="nav-note">Risk Measures · coming next</span>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <button class="btn mobile-menu" aria-label="Mở điều hướng">☰</button>
+        <div class="crumb">Time Series Risk Lab › Volatility Models</div>
+        <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/tree/main/notebooks/03_volatility-models">⌘ Notebooks</a>
+      </div>
+
+      <header class="hero">
+        <div>
+          <div class="tag">PHASE 3 · VOLATILITY MODELS</div>
+          <h2>Conditional Volatility</h2>
+          <p>Đo lường và dự báo risk thay đổi theo thời gian thay vì giả định variance là hằng số.</p>
+        </div>
+      </header>
+
+      <section class="grid grid-3">
+        <article class="card">
+          <h3 class="question">❓ Câu hỏi trung tâm</h3>
+          <p>Shock và volatility quá khứ cho biết gì về uncertainty và tail risk của kỳ tiếp theo?</p>
+        </article>
+        <article class="card">
+          <h3 class="idea">💡 Key idea</h3>
+          <p>Financial returns thường có volatility clustering: giai đoạn biến động cao hoặc thấp có xu hướng kéo dài.</p>
+        </article>
+        <article class="card">
+          <h3 class="warning">⚠️ Không chỉ fit model</h3>
+          <p>GARCH hữu ích khi residual diagnostics, distributional choice và out-of-sample risk validation cùng ủng hộ nó.</p>
+        </article>
+      </section>
+
+      <section id="arch-effect" class="section">
+        <h2 class="section-heading"><span>01.</span> ARCH Effect: Khi nào variance thay đổi?</h2>
+        <div class="grid grid-2">
+          <article class="card">
+            <h3>📐 Conditional variance</h3>
+            <p>Mean model tách return thành phần dự báo được và innovation:</p>
+            <div class="formula">r<sub>t</sub> = μ<sub>t</sub> + ε<sub>t</sub>, &nbsp; ε<sub>t</sub> = σ<sub>t</sub>z<sub>t</sub></div>
+            <p><span class="mini-formula">σ²<sub>t</sub></span> là variance có điều kiện theo information set tại t − 1. Nếu nó thay đổi, một standard deviation chung cho mọi ngày sẽ che khuất risk regime.</p>
+          </article>
+          <article class="card">
+            <h3>🔍 Cách phát hiện</h3>
+            <ul class="list">
+              <li>Vẽ return và squared return để quan sát clustering.</li>
+              <li>Kiểm tra ACF/PACF của squared residuals.</li>
+              <li>Dùng ARCH-LM trên residual từ mean model phù hợp.</li>
+              <li>Không test trực tiếp price level khi mục tiêu là variance của return.</li>
+            </ul>
+          </article>
+        </div>
+        <div class="card decision warn callout">
+          <h3>ARCH-LM test</h3>
+          <p>H<sub>0</sub>: không có ARCH effect đến lag đã chọn. P-value nhỏ là bằng chứng conditional heteroskedasticity còn lại trong residual, không phải bằng chứng một specification GARCH cụ thể chắc chắn đúng. Chọn lag dựa vào frequency và mục tiêu, không tìm lag chỉ để có p-value mong muốn.</p>
+        </div>
+      </section>
+
+      <section id="arch" class="section">
+        <h2 class="section-heading"><span>02.</span> ARCH: Variance phản ứng với shock gần đây</h2>
+        <div class="grid grid-2">
+          <article class="card">
+            <h3>📐 ARCH(q)</h3>
+            <div class="formula">σ²<sub>t</sub> = ω + ∑<sub>i=1</sub><sup>q</sup> α<sub>i</sub>ε²<sub>t-i</sub></div>
+            <ul class="list callout">
+              <li><span class="mini-formula">ω &gt; 0</span>: variance baseline.</li>
+              <li><span class="mini-formula">α<sub>i</sub> ≥ 0</span>: phản ứng của variance với shock bình phương ở lag i.</li>
+              <li>Điều kiện covariance stationarity tùy theo tổng các hệ số ARCH.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>🧠 Trực giác</h3>
+            <p>Một return bất thường lớn, dương hoặc âm, làm tăng <span class="mini-formula">ε²</span> và do đó nâng variance dự báo. ARCH(q) dùng nhiều lag shock để tái hiện độ dai dẳng này.</p>
+            <p class="muted">Nếu q phải lớn mới mô tả được persistence, GARCH thường là cách gọn hơn.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="garch" class="section">
+        <h2 class="section-heading"><span>03.</span> GARCH(1,1): Shock và variance quá khứ</h2>
+        <div class="grid grid-2">
+          <article class="card">
+            <h3>📐 Công thức chính</h3>
+            <div class="formula">σ²<sub>t</sub> = ω + αε²<sub>t-1</sub> + βσ²<sub>t-1</sub></div>
+            <ul class="list callout">
+              <li><span class="mini-formula">ω</span>: variance baseline, thường yêu cầu dương.</li>
+              <li><span class="mini-formula">α</span>: news effect, phản ứng với shock mới.</li>
+              <li><span class="mini-formula">β</span>: persistence của variance.</li>
+              <li><span class="mini-formula">α + β</span>: persistence tổng; với GARCH chuẩn, nhỏ hơn 1 là điều kiện covariance stationarity thường dùng.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>🎛️ Trực quan: α và β</h3>
+            <div class="slider-row"><label for="alpha">α</label><input id="alpha" type="range" min="0.01" max="0.50" step="0.01" value="0.10"><output id="alphaValue">0.10</output></div>
+            <div class="slider-row"><label for="beta">β</label><input id="beta" type="range" min="0.50" max="0.98" step="0.01" value="0.85"><output id="betaValue">0.85</output></div>
+            <div class="slider-row"><label for="omega">ω</label><input id="omega" type="range" min="0.00001" max="0.00100" step="0.00001" value="0.00001"><output id="omegaValue">0.00001</output></div>
+            <div class="plot"><canvas id="volChart" aria-label="Biểu đồ conditional volatility mô phỏng"></canvas></div>
+            <p class="muted">Persistence α + β = <strong id="persistence">0.95</strong>. Giá trị gần 1 khiến shock mất nhiều thời gian hơn để tiêu tan.</p>
+          </article>
+        </div>
+        <div class="card decision callout">
+          <h3>Giả định cần xem xét</h3>
+          <p>GARCH là conditional variance model, không làm innovations tự động normal. Chọn distribution (Normal, Student-t, skewed-t...) theo tail behavior và mục tiêu risk. Mean equation cũng phải được đặc tả đủ để residual không giữ autocorrelation hệ thống.</p>
+        </div>
+      </section>
+
+      <section id="asymmetry" class="section">
+        <h2 class="section-heading"><span>04.</span> Asymmetry: Bad news có khác good news?</h2>
+        <div class="card table-wrap">
+          <table>
+            <thead><tr><th>Model</th><th>Variance equation / feature</th><th>Khi cân nhắc</th></tr></thead>
+            <tbody>
+              <tr><td>GARCH</td><td>Phản ứng đối xứng với ε².</td><td>Không có bằng chứng leverage/asymmetry rõ ràng.</td></tr>
+              <tr><td>GJR-GARCH</td><td>Thêm indicator cho negative shock: γI(ε<sub>t-1</sub> &lt; 0)ε²<sub>t-1</sub>.</td><td>Negative return làm variance tăng mạnh hơn positive return cùng độ lớn.</td></tr>
+              <tr><td>EGARCH</td><td>Mô hình log variance; cho phép asymmetric signed shocks và không cần ràng buộc positivity cùng cách chuẩn.</td><td>Cần flexibility về leverage effect hoặc variance dynamics.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid grid-2 callout">
+          <article class="card">
+            <h3>⚖️ Model selection</h3>
+            <ul class="list">
+              <li>Bắt đầu từ model đơn giản có economic rationale.</li>
+              <li>So sánh residual diagnostics, parameter plausibility và forecast/risk performance.</li>
+              <li>AIC/BIC hỗ trợ trade-off in-sample; không thay cho backtest.</li>
+              <li>Không suy diễn leverage effect chỉ từ một hệ số không ổn định qua sample.</li>
+            </ul>
+          </article>
+          <article class="card decision risk">
+            <h3>⚠️ Common mistakes</h3>
+            <ul class="list">
+              <li class="bad">Gọi mọi variance persistence cao là bằng chứng IGARCH.</li>
+              <li class="bad">Bỏ qua parameter constraints và convergence warnings.</li>
+              <li class="bad">Chọn Normal distribution dù standardized residual có tail dày.</li>
+              <li class="bad">Dùng in-sample volatility fit như bằng chứng VaR forecast đáng tin.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="diagnostics" class="section">
+        <h2 class="section-heading"><span>05.</span> Diagnostics: Model đã lấy hết structure chưa?</h2>
+        <div class="grid grid-3">
+          <article class="card">
+            <h3>Mean residuals</h3>
+            <p>Ljung-Box trên standardized residuals. Autocorrelation còn lại có thể báo mean equation hoặc lag specification chưa đủ.</p>
+          </article>
+          <article class="card">
+            <h3>Variance residuals</h3>
+            <p>Ljung-Box trên squared standardized residuals và ARCH-LM. Nếu còn ARCH effect, conditional variance chưa được giải thích đủ.</p>
+          </article>
+          <article class="card">
+            <h3>Distribution &amp; tails</h3>
+            <p>Q-Q plot, skewness, kurtosis và tail exceptions kiểm tra liệu innovation distribution có phù hợp cho mục tiêu risk không.</p>
+          </article>
+        </div>
+        <div class="card decision good callout">
+          <h3>Điều kiện chấp nhận thực tế</h3>
+          <p>Không có một cutoff duy nhất. Model khả dụng khi diagnostics không chỉ ra structure nghiêm trọng còn lại, parameters ổn định và hợp lý, forecast có giá trị ngoài mẫu, và risk use được backtest ở horizon/confidence level thực tế.</p>
+        </div>
+      </section>
+
+      <section id="forecasting" class="section">
+        <h2 class="section-heading"><span>06.</span> Forecasting and Risk Application</h2>
+        <div class="grid grid-2">
+          <article class="card">
+            <h3>📊 Out-of-sample validation</h3>
+            <ol class="list">
+              <li>Chọn rolling hoặc expanding window phù hợp information flow thực tế.</li>
+              <li>Refit/reforecast chỉ với dữ liệu sẵn có tại forecast origin.</li>
+              <li>So sánh variance/volatility forecast với proxy phù hợp, đồng thời đánh giá stability theo regime.</li>
+              <li>Nếu dùng cho VaR/ES, backtest exceptions và tail losses ngoài mẫu.</li>
+            </ol>
+          </article>
+          <article class="card">
+            <h3>💰 Risk interpretation</h3>
+            <p>Conditional volatility forecast không phải dự báo direction hay guaranteed loss. Nó là input cho position sizing, margin, VaR/ES hoặc stress scenario; các ứng dụng này còn phụ thuộc return distribution, horizon, liquidity và concentration risk.</p>
+            <div class="flow callout">
+              <span>Residuals</span><span class="arrow">→</span><span>σ forecast</span><span class="arrow">→</span><span>Distribution</span><span class="arrow">→</span><span>VaR / ES</span><span class="arrow">→</span><span>Backtest</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section grid grid-2">
+        <article class="card lesson-links">
+          <h3>🐍 Python notebooks</h3>
+          <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/03_volatility-models/arch/arch_effect.ipynb">Mở notebook ARCH Effect →</a>
+          <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/03_volatility-models/arch/arch_model.ipynb">Mở notebook ARCH Model →</a>
+          <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/03_volatility-models/garch/garch11.ipynb">Mở notebook GARCH(1,1) →</a>
+          <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/03_volatility-models/garch/egarch.ipynb">Mở notebook EGARCH →</a>
+          <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/03_volatility-models/garch/gjr_garch.ipynb">Mở notebook GJR-GARCH →</a>
+          <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/03_volatility-models/garch/garch_forecast.ipynb">Mở notebook GARCH Forecast →</a>
+        </article>
+        <article class="card">
+          <h3>📚 References</h3>
+          <ul class="list">
+            <li>Engle, R. F. (1982). Autoregressive Conditional Heteroscedasticity with Estimates of the Variance of United Kingdom Inflation.</li>
+            <li>Bollerslev, T. (1986). Generalized Autoregressive Conditional Heteroskedasticity.</li>
+            <li>Nelson, D. B. (1991). Conditional Heteroskedasticity in Asset Returns: A New Approach.</li>
+            <li>Glosten, L., Jagannathan, R. &amp; Runkle, D. (1993). On the Relation between the Expected Value and the Volatility of Nominal Excess Return on Stocks.</li>
+            <li>Tsay, R. S. <em>Analysis of Financial Time Series</em>.</li>
+          </ul>
+        </article>
+      </section>
+      <footer class="footer">Time Series Risk Lab · Volatility Models · ARCH → GARCH → Forecast → VaR/ES validation</footer>
+    </main>
+
+    <aside class="rightbar">
+      <article class="card">
+        <h3>🎯 Learning outcome</h3>
+        <p class="muted">Chọn và kiểm tra conditional variance model trước khi dùng volatility forecast cho risk decision.</p>
+      </article>
+      <article class="card">
+        <h3>Workflow</h3>
+        <ol class="list">
+          <li>Fit mean model</li>
+          <li>Test ARCH effect</li>
+          <li>Fit variance model</li>
+          <li>Diagnose residuals</li>
+          <li>Forecast &amp; backtest</li>
+        </ol>
+      </article>
+      <article class="card">
+        <h3>Giới hạn</h3>
+        <p class="muted">GARCH dựa trên lịch sử và có thể phản ứng chậm với regime break. Không thay thế stress testing, liquidity assessment hoặc model-risk governance.</p>
+      </article>
+    </aside>
+  </div>
+  <script src="../assets/js/lab.js"></script>
+</body>
+</html>
