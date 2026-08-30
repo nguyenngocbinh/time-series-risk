@@ -41,6 +41,7 @@ Trang web dùng sidebar navigation, methodology cards, model map và interactive
 
 ## 🧭 Methodology Documentation
 
+- [Foundations: Time Series, Returns & Stationarity](docs/foundations/index.html)
 - [Authoring & AI instructions](docs/INSTRUCTIONS.md)
 - [Methodology map & roadmap](docs/methodology-map.md)
 
