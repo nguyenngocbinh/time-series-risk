@@ -1,343 +1,669 @@
 <!doctype html>
 <html lang="vi">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Foundations for time-series risk modeling: time series, returns, stationarity, ADF, KPSS, and differencing.">
-  <title>Foundations | Time Series Risk Lab</title>
-  <link rel="stylesheet" href="../assets/css/lab.css">
-  <style>
-    .nav-note { color: var(--muted); font-size: 12px; padding: 0 10px; }
-    .section { scroll-margin-top: 18px; margin-top: 28px; }
-    .section-heading { margin: 0 0 14px; font-size: 22px; }
-    .section-heading span { color: var(--cyan); }
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border-bottom: 1px solid var(--border); padding: 9px 8px; text-align: left; vertical-align: top; }
-    th { color: #c4b5fd; font-size: 12px; letter-spacing: .03em; }
-    .decision { border-left: 3px solid var(--accent); }
-    .decision.good { border-left-color: var(--green); }
-    .decision.warn { border-left-color: var(--yellow); }
-    .decision.risk { border-left-color: var(--red); }
-    .callout { margin-top: 14px; color: #cbd5e1; }
-    .number { color: var(--cyan); font-size: 24px; font-weight: 800; }
-    .mini-formula { font: 18px/1.5 "STIX Two Math", "Cambria Math", serif; color: #ddd6fe; }
-    .lesson-links a { display: block; margin: 8px 0; }
-    .flow { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; }
-    .flow > span { padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: #0b1728; }
-    .flow .arrow { border: 0; background: transparent; color: var(--muted); padding: 8px 0; }
-    @media (max-width: 760px) { .section-heading { font-size: 20px; } }
-  </style>
-</head>
-<body>
-  <div class="app">
-    <aside class="sidebar">
-      <a class="brand" href="../index.html" aria-label="Time Series Risk Lab home">
-        <div class="brand-mark">〽</div>
-        <div>
-          <h1>TIME SERIES <span>RISK LAB</span></h1>
-          <small>Econometrics • Volatility • VaR</small>
-        </div>
-      </a>
-      <nav class="nav" aria-label="Foundations navigation">
-        <div class="nav-group">
-          <div class="nav-title">FOUNDATIONS</div>
-          <a class="active" href="#time-series">Time Series</a>
-          <a href="#returns">Returns &amp; Log Returns</a>
-          <a href="#stationarity">Stationarity</a>
-          <a href="#tests">ADF &amp; KPSS</a>
-          <a href="#differencing">Differencing</a>
-        </div>
-        <div class="nav-group">
-          <div class="nav-title">NEXT</div>
-          <span class="nav-note">Mean Models · coming next</span>
-          <span class="nav-note">Volatility Models · coming next</span>
-          <span class="nav-note">Risk Measures · coming next</span>
-        </div>
-        <p class="nav-note">Phase 1 · Foundations</p>
-      </nav>
-    </aside>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Foundations for time-series risk modeling: time series, returns, stationarity, ADF, KPSS, and differencing."
+    />
+    <title>Foundations | Time Series Risk Lab</title>
+    <link rel="stylesheet" href="../assets/css/lab.css" />
+    <style>
+      .nav-note {
+        color: var(--muted);
+        font-size: 12px;
+        padding: 0 10px;
+      }
+      .section {
+        scroll-margin-top: 18px;
+        margin-top: 28px;
+      }
+      .section-heading {
+        margin: 0 0 14px;
+        font-size: 22px;
+      }
+      .section-heading span {
+        color: var(--cyan);
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border-bottom: 1px solid var(--border);
+        padding: 9px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        color: #c4b5fd;
+        font-size: 12px;
+        letter-spacing: 0.03em;
+      }
+      .decision {
+        border-left: 3px solid var(--accent);
+      }
+      .decision.good {
+        border-left-color: var(--green);
+      }
+      .decision.warn {
+        border-left-color: var(--yellow);
+      }
+      .decision.risk {
+        border-left-color: var(--red);
+      }
+      .callout {
+        margin-top: 14px;
+        color: #cbd5e1;
+      }
+      .number {
+        color: var(--cyan);
+        font-size: 24px;
+        font-weight: 800;
+      }
+      .mini-formula {
+        font:
+          18px/1.5 "STIX Two Math",
+          "Cambria Math",
+          serif;
+        color: #ddd6fe;
+      }
+      .lesson-links a {
+        display: block;
+        margin: 8px 0;
+      }
+      .flow {
+        display: flex;
+        align-items: stretch;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .flow > span {
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #0b1728;
+      }
+      .flow .arrow {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        padding: 8px 0;
+      }
+      @media (max-width: 760px) {
+        .section-heading {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <a
+          class="brand"
+          href="../index.html"
+          aria-label="Time Series Risk Lab home"
+        >
+          <div class="brand-mark">〽</div>
+          <div>
+            <h1>TIME SERIES <span>RISK LAB</span></h1>
+            <small>Econometrics • Volatility • VaR</small>
+          </div>
+        </a>
+        <nav class="nav" aria-label="Foundations navigation">
+          <div class="nav-group">
+            <div class="nav-title">FOUNDATIONS</div>
+            <a class="active" href="#time-series">Time Series</a>
+            <a href="#returns">Returns &amp; Log Returns</a>
+            <a href="#stationarity">Stationarity</a>
+            <a href="#tests">ADF &amp; KPSS</a>
+            <a href="#differencing">Differencing</a>
+          </div>
+          <div class="nav-group">
+            <div class="nav-title">NEXT</div>
+            <span class="nav-note">Mean Models · coming next</span>
+            <span class="nav-note">Volatility Models · coming next</span>
+            <span class="nav-note">Risk Measures · coming next</span>
+          </div>
+          <p class="nav-note">Phase 1 · Foundations</p>
+        </nav>
+      </aside>
 
-    <main class="main">
-      <div class="topbar">
-        <button class="btn mobile-menu" aria-label="Mở điều hướng">☰</button>
-        <div class="crumb">Time Series Risk Lab › Foundations</div>
-        <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/tree/main/notebooks/01_foundations/stationarity">⌘ Notebooks</a>
-      </div>
-
-      <header class="hero">
-        <div>
-          <div class="tag">PHASE 1 · FOUNDATIONS</div>
-          <h2>Time Series Foundations</h2>
-          <p>Từ quan sát theo thời gian đến quyết định biến đổi chuỗi trước khi xây dựng model.</p>
+      <main class="main">
+        <div class="topbar">
+          <button class="btn mobile-menu" aria-label="Mở điều hướng">☰</button>
+          <div class="crumb">
+            <a
+              href="../index.html"
+              style="color: inherit; text-decoration: none"
+              >Time Series Risk Lab</a
+            >
+            ›
+            <a
+              href="../index.html#model-map"
+              style="color: inherit; text-decoration: none"
+              >Model Map</a
+            >
+            › Foundations
+          </div>
+          <a
+            class="btn"
+            href="https://github.com/nguyenngocbinh/time-series-risk/tree/main/notebooks/01_foundations/stationarity"
+            >⌘ Notebooks</a
+          >
         </div>
-      </header>
 
-      <section class="grid grid-3">
-        <article class="card">
-          <h3 class="question">❓ Câu hỏi trung tâm</h3>
-          <p>Dữ liệu có đặc tính theo thời gian nào, và chuỗi đã đủ ổn định để suy luận hoặc dự báo chưa?</p>
-        </article>
-        <article class="card">
-          <h3 class="idea">💡 Key idea</h3>
-          <p>Trước ARIMA, VAR hay GARCH, xác định đúng biến phân tích và tính stationarity. Sai bước này có thể tạo ra quan hệ giả.</p>
-        </article>
-        <article class="card">
-          <h3 class="warning">⚠️ Quy tắc quyết định</h3>
-          <p>Không chỉ nhìn biểu đồ hoặc một p-value. Kết hợp đồ thị, kiến thức nghiệp vụ, ADF/KPSS và kiểm tra sau biến đổi.</p>
-        </article>
-      </section>
+        <header class="hero">
+          <div>
+            <div class="tag">PHASE 1 · FOUNDATIONS</div>
+            <h2>Time Series Foundations</h2>
+            <p>
+              Từ quan sát theo thời gian đến quyết định biến đổi chuỗi trước khi
+              xây dựng model.
+            </p>
+          </div>
+        </header>
 
-      <section id="time-series" class="section">
-        <h2 class="section-heading"><span>01.</span> Time Series</h2>
-        <div class="grid grid-2">
+        <section class="grid grid-3">
           <article class="card">
-            <h3>Chuỗi thời gian khác gì cross-section?</h3>
-            <p>Một time series quan sát cùng biến theo thứ tự thời gian: <span class="mini-formula">{y<sub>t</sub>}</span>. Thứ tự này mang thông tin; giá trị hôm nay có thể phụ thuộc vào quá khứ, mùa vụ, chu kỳ hoặc biến cố.</p>
-            <div class="flow callout">
-              <span>Giá quan sát</span><span class="arrow">→</span><span>Return</span><span class="arrow">→</span><span>Stationarity</span><span class="arrow">→</span><span>Mean / volatility model</span>
-            </div>
+            <h3 class="question">❓ Câu hỏi trung tâm</h3>
+            <p>
+              Dữ liệu có đặc tính theo thời gian nào, và chuỗi đã đủ ổn định để
+              suy luận hoặc dự báo chưa?
+            </p>
           </article>
           <article class="card">
-            <h3>Đọc dữ liệu trước khi modeling</h3>
-            <ul class="list">
-              <li>Tần suất: intraday, ngày, tuần hay tháng?</li>
-              <li>Index thời gian có đều, đúng timezone và không trùng lặp?</li>
-              <li>Missing values là nghỉ giao dịch, lỗi thu thập hay giá trị thực?</li>
-              <li>Đơn vị, corporate actions và calendar có được xử lý nhất quán?</li>
-              <li>Có structural break hoặc thay đổi chế độ (regime) đáng chú ý?</li>
-            </ul>
+            <h3 class="idea">💡 Key idea</h3>
+            <p>
+              Trước ARIMA, VAR hay GARCH, xác định đúng biến phân tích và tính
+              stationarity. Sai bước này có thể tạo ra quan hệ giả.
+            </p>
           </article>
-        </div>
-        <div class="card decision warn callout">
-          <h3>💰 Risk interpretation</h3>
-          <p>Thời điểm quan sát và chất lượng chuỗi quyết định ý nghĩa của risk estimate. Trộn close-to-close return với dữ liệu intraday, hoặc bỏ qua ngày không giao dịch, có thể làm sai volatility và VaR ngay từ đầu vào.</p>
-        </div>
-      </section>
+          <article class="card">
+            <h3 class="warning">⚠️ Quy tắc quyết định</h3>
+            <p>
+              Không chỉ nhìn biểu đồ hoặc một p-value. Kết hợp đồ thị, kiến thức
+              nghiệp vụ, ADF/KPSS và kiểm tra sau biến đổi.
+            </p>
+          </article>
+        </section>
 
-      <section id="returns" class="section">
-        <h2 class="section-heading"><span>02.</span> Returns &amp; Log Returns</h2>
-        <div class="grid grid-2">
-          <article class="card">
-            <h3>📐 Công thức</h3>
-            <p>Simple return:</p>
-            <div class="formula">R<sub>t</sub> = P<sub>t</sub> / P<sub>t-1</sub> − 1</div>
-            <p>Log return:</p>
-            <div class="formula">r<sub>t</sub> = ln(P<sub>t</sub> / P<sub>t-1</sub>)</div>
-            <p class="muted">P<sub>t</sub> là giá tại thời điểm t. Với biến động nhỏ, log return xấp xỉ simple return.</p>
-          </article>
-          <article class="card">
-            <h3>🧠 Trực giác và lựa chọn</h3>
+        <section id="time-series" class="section">
+          <h2 class="section-heading"><span>01.</span> Time Series</h2>
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>Chuỗi thời gian khác gì cross-section?</h3>
+              <p>
+                Một time series quan sát cùng biến theo thứ tự thời gian:
+                <span class="mini-formula">{y<sub>t</sub>}</span>. Thứ tự này
+                mang thông tin; giá trị hôm nay có thể phụ thuộc vào quá khứ,
+                mùa vụ, chu kỳ hoặc biến cố.
+              </p>
+              <div class="flow callout">
+                <span>Giá quan sát</span><span class="arrow">→</span
+                ><span>Return</span><span class="arrow">→</span
+                ><span>Stationarity</span><span class="arrow">→</span
+                ><span>Mean / volatility model</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>Đọc dữ liệu trước khi modeling</h3>
+              <ul class="list">
+                <li>Tần suất: intraday, ngày, tuần hay tháng?</li>
+                <li>
+                  Index thời gian có đều, đúng timezone và không trùng lặp?
+                </li>
+                <li>
+                  Missing values là nghỉ giao dịch, lỗi thu thập hay giá trị
+                  thực?
+                </li>
+                <li>
+                  Đơn vị, corporate actions và calendar có được xử lý nhất quán?
+                </li>
+                <li>
+                  Có structural break hoặc thay đổi chế độ (regime) đáng chú ý?
+                </li>
+              </ul>
+            </article>
+          </div>
+          <div class="card decision warn callout">
+            <h3>💰 Risk interpretation</h3>
+            <p>
+              Thời điểm quan sát và chất lượng chuỗi quyết định ý nghĩa của risk
+              estimate. Trộn close-to-close return với dữ liệu intraday, hoặc bỏ
+              qua ngày không giao dịch, có thể làm sai volatility và VaR ngay từ
+              đầu vào.
+            </p>
+          </div>
+        </section>
+
+        <section id="returns" class="section">
+          <h2 class="section-heading">
+            <span>02.</span> Returns &amp; Log Returns
+          </h2>
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>📐 Công thức</h3>
+              <p>Simple return:</p>
+              <div class="formula">
+                R<sub>t</sub> = P<sub>t</sub> / P<sub>t-1</sub> − 1
+              </div>
+              <p>Log return:</p>
+              <div class="formula">
+                r<sub>t</sub> = ln(P<sub>t</sub> / P<sub>t-1</sub>)
+              </div>
+              <p class="muted">
+                P<sub>t</sub> là giá tại thời điểm t. Với biến động nhỏ, log
+                return xấp xỉ simple return.
+              </p>
+            </article>
+            <article class="card">
+              <h3>🧠 Trực giác và lựa chọn</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Đặc tính</th>
+                    <th>Simple return</th>
+                    <th>Log return</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Cộng dồn qua thời gian</td>
+                    <td>Nhân các gross return</td>
+                    <td>Cộng trực tiếp</td>
+                  </tr>
+                  <tr>
+                    <td>Giới hạn thấp</td>
+                    <td>−100%</td>
+                    <td>Không bị chặn dưới</td>
+                  </tr>
+                  <tr>
+                    <td>Phù hợp</td>
+                    <td>Diễn giải P&amp;L trực tiếp</td>
+                    <td>Phân tích thống kê, aggregation</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="callout">
+                Lựa chọn phải nhất quán trong toàn bộ pipeline: estimation,
+                forecast và risk reporting.
+              </p>
+            </article>
+          </div>
+          <div class="grid grid-2 callout">
+            <article class="card">
+              <h3>🎛️ Return calculator</h3>
+              <div class="slider-row">
+                <label for="start-price">P<sub>t-1</sub></label>
+                <input
+                  id="start-price"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value="100"
+                  aria-label="Giá đầu kỳ"
+                />
+                <output id="start-price-value">100.00</output>
+              </div>
+              <div class="slider-row">
+                <label for="end-price">P<sub>t</sub></label>
+                <input
+                  id="end-price"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  value="105"
+                  aria-label="Giá cuối kỳ"
+                />
+                <output id="end-price-value">105.00</output>
+              </div>
+              <p>
+                Simple return:
+                <strong id="simple-return" class="number">5.00%</strong>
+              </p>
+              <p>
+                Log return:
+                <strong id="log-return" class="number">4.88%</strong>
+              </p>
+            </article>
+            <article class="card">
+              <h3>⚠️ Common mistakes</h3>
+              <ul class="list">
+                <li class="bad">
+                  Mô hình hóa raw price như thể nó là return stationarity.
+                </li>
+                <li class="bad">
+                  Tính return qua missing date mà không hiểu khoảng nắm giữ.
+                </li>
+                <li class="bad">Dùng adjusted và unadjusted price lẫn lộn.</li>
+                <li class="bad">
+                  Annualize volatility hoặc VaR khi tần suất dữ liệu không đồng
+                  nhất.
+                </li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="stationarity" class="section">
+          <h2 class="section-heading"><span>03.</span> Stationarity</h2>
+          <div class="grid grid-3">
+            <article class="card">
+              <h3 class="question">❓ Vì sao cần biết?</h3>
+              <p>
+                Nhiều kết quả của time-series econometrics dựa trên quá trình ổn
+                định theo thời gian. Non-stationary levels có thể tạo hồi quy
+                giả (spurious regression).
+              </p>
+            </article>
+            <article class="card">
+              <h3 class="idea">💡 Weak stationarity</h3>
+              <p>
+                <span class="mini-formula">E[y<sub>t</sub>] = μ</span>,
+                <span class="mini-formula">Var(y<sub>t</sub>) = σ²</span>, và
+                covariance chỉ phụ thuộc độ trễ h, không phụ thuộc thời điểm t.
+              </p>
+            </article>
+            <article class="card">
+              <h3 class="warning">⚠️ Không đồng nghĩa</h3>
+              <p>
+                Stationarity không bảo đảm normality, independence, hay causal
+                relationship. Nó cũng không thay thế kiểm tra structural break.
+              </p>
+            </article>
+          </div>
+          <div class="grid grid-2 callout">
+            <article class="card">
+              <h3>Giả định và phạm vi</h3>
+              <ul class="list">
+                <li>
+                  Kiểm tra theo specification đã chọn: constant, trend và lag
+                  length ảnh hưởng kết quả.
+                </li>
+                <li>Stationary quanh trend khác stationary quanh mean.</li>
+                <li>
+                  Unit root test có power hạn chế trong mẫu nhỏ hoặc khi nghiệm
+                  gần 1.
+                </li>
+                <li>
+                  Structural break có thể làm test hiểu nhầm chuỗi stationary
+                  thành unit root.
+                </li>
+              </ul>
+            </article>
+            <article class="card decision">
+              <h3>Methodology</h3>
+              <ol class="list">
+                <li>
+                  Vẽ level và return; kiểm tra frequency, outlier, missing
+                  values.
+                </li>
+                <li>Đặt deterministic terms theo lý thuyết dữ liệu.</li>
+                <li>Dùng ADF và KPSS như bằng chứng bổ sung.</li>
+                <li>Kiểm tra ACF và hành vi sau biến đổi.</li>
+                <li>
+                  Ghi lại transformation để forecast/risk scale có thể đảo ngược
+                  và audit.
+                </li>
+              </ol>
+            </article>
+          </div>
+        </section>
+
+        <section id="tests" class="section">
+          <h2 class="section-heading">
+            <span>04.</span> ADF &amp; KPSS: Evidence, Not a Button
+          </h2>
+          <div class="card table-wrap">
             <table>
-              <thead><tr><th>Đặc tính</th><th>Simple return</th><th>Log return</th></tr></thead>
+              <thead>
+                <tr>
+                  <th>Test</th>
+                  <th>Null hypothesis H<sub>0</sub></th>
+                  <th>Diễn giải p-value nhỏ</th>
+                  <th>Điều cần chọn</th>
+                </tr>
+              </thead>
               <tbody>
-                <tr><td>Cộng dồn qua thời gian</td><td>Nhân các gross return</td><td>Cộng trực tiếp</td></tr>
-                <tr><td>Giới hạn thấp</td><td>−100%</td><td>Không bị chặn dưới</td></tr>
-                <tr><td>Phù hợp</td><td>Diễn giải P&amp;L trực tiếp</td><td>Phân tích thống kê, aggregation</td></tr>
+                <tr>
+                  <td>Augmented Dickey-Fuller (ADF)</td>
+                  <td>Có unit root; chuỗi non-stationary.</td>
+                  <td>
+                    Bác bỏ unit root, ủng hộ stationarity theo specification.
+                  </td>
+                  <td>Constant/trend và số lag.</td>
+                </tr>
+                <tr>
+                  <td>KPSS</td>
+                  <td>Chuỗi stationary quanh level hoặc trend.</td>
+                  <td>Bác bỏ stationarity theo specification.</td>
+                  <td>Regression term và bandwidth.</td>
+                </tr>
               </tbody>
             </table>
-            <p class="callout">Lựa chọn phải nhất quán trong toàn bộ pipeline: estimation, forecast và risk reporting.</p>
+          </div>
+          <div class="grid grid-2 callout">
+            <article class="card decision good">
+              <h3>Ma trận quyết định</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ADF</th>
+                    <th>KPSS</th>
+                    <th>Đọc kết quả</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Bác bỏ H<sub>0</sub></td>
+                    <td>Không bác bỏ H<sub>0</sub></td>
+                    <td>Bằng chứng khá nhất quán cho stationarity.</td>
+                  </tr>
+                  <tr>
+                    <td>Không bác bỏ H<sub>0</sub></td>
+                    <td>Bác bỏ H<sub>0</sub></td>
+                    <td>
+                      Bằng chứng khá nhất quán cho unit root/non-stationarity.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">Mâu thuẫn</td>
+                    <td>
+                      Kiểm tra trend, lag, break, sample size và economic
+                      context; không tự động kết luận.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </article>
+            <article class="card">
+              <h3>🔍 Diagnostics</h3>
+              <ul class="list">
+                <li>
+                  So sánh level, log level, return và sai phân khi phù hợp.
+                </li>
+                <li>Kiểm tra residual autocorrelation sau model mean.</li>
+                <li>
+                  Đánh giá sensitivity với reasonable lag/trend specifications.
+                </li>
+                <li>
+                  Đánh dấu sự kiện và kiểm tra break trước khi sai phân nhiều
+                  lần.
+                </li>
+                <li>
+                  Không diễn giải p-value sát ngưỡng như bằng chứng chắc chắn.
+                </li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section id="differencing" class="section">
+          <h2 class="section-heading">
+            <span>05.</span> Differencing and the Next Model
+          </h2>
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>📐 Biến đổi thường dùng</h3>
+              <p>First difference:</p>
+              <div class="formula">
+                Δy<sub>t</sub> = y<sub>t</sub> − y<sub>t-1</sub>
+              </div>
+              <p>Seasonal difference với chu kỳ s:</p>
+              <div class="formula">
+                Δ<sub>s</sub>y<sub>t</sub> = y<sub>t</sub> − y<sub>t-s</sub>
+              </div>
+              <p class="muted">
+                Với log price, first difference xấp xỉ log return.
+              </p>
+            </article>
+            <article class="card">
+              <h3>⚖️ Model selection</h3>
+              <ul class="list">
+                <li>
+                  <strong>Stationary level:</strong> model trực tiếp level nếu ý
+                  nghĩa kinh tế phù hợp.
+                </li>
+                <li>
+                  <strong>Unit root:</strong> cân nhắc first difference hoặc
+                  return.
+                </li>
+                <li>
+                  <strong>Common stochastic trend:</strong> kiểm tra
+                  cointegration trước khi sai phân toàn bộ; VECM có thể bảo toàn
+                  quan hệ dài hạn.
+                </li>
+                <li>
+                  <strong>Trend-stationary:</strong> detrending có thể phù hợp
+                  hơn differencing.
+                </li>
+              </ul>
+            </article>
+          </div>
+          <div class="grid grid-2 callout">
+            <article class="card decision risk">
+              <h3>⚠️ Over-differencing</h3>
+              <p>
+                Sai phân quá mức có thể đưa MA behavior giả tạo, khuếch đại
+                noise và làm mất long-run information. Dừng khi bằng chứng và
+                mục tiêu model cho thấy transformation là đủ.
+              </p>
+            </article>
+            <article class="card">
+              <h3>📊 Validation &amp; risk use</h3>
+              <p>
+                Transformation phải được cố định chỉ từ information available
+                tại thời điểm forecast. Đánh giá forecast trên out-of-sample
+                window; với risk, giữ nhất quán giữa return horizon, volatility
+                forecast, VaR/ES horizon và backtest exceptions.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section grid grid-2">
+          <article class="card lesson-links">
+            <h3>🐍 Python notebooks</h3>
+            <a
+              class="btn"
+              href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/01_foundations/stationarity/adf.ipynb"
+              >Mở notebook ADF →</a
+            >
+            <a
+              class="btn"
+              href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/01_foundations/stationarity/kpss.ipynb"
+              >Mở notebook KPSS →</a
+            >
+            <a
+              class="btn"
+              href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/01_foundations/stationarity/differencing.ipynb"
+              >Mở notebook Differencing →</a
+            >
           </article>
-        </div>
-        <div class="grid grid-2 callout">
           <article class="card">
-            <h3>🎛️ Return calculator</h3>
-            <div class="slider-row">
-              <label for="start-price">P<sub>t-1</sub></label>
-              <input id="start-price" type="number" min="0.01" step="0.01" value="100" aria-label="Giá đầu kỳ">
-              <output id="start-price-value">100.00</output>
-            </div>
-            <div class="slider-row">
-              <label for="end-price">P<sub>t</sub></label>
-              <input id="end-price" type="number" min="0.01" step="0.01" value="105" aria-label="Giá cuối kỳ">
-              <output id="end-price-value">105.00</output>
-            </div>
-            <p>Simple return: <strong id="simple-return" class="number">5.00%</strong></p>
-            <p>Log return: <strong id="log-return" class="number">4.88%</strong></p>
-          </article>
-          <article class="card">
-            <h3>⚠️ Common mistakes</h3>
+            <h3>📚 References</h3>
             <ul class="list">
-              <li class="bad">Mô hình hóa raw price như thể nó là return stationarity.</li>
-              <li class="bad">Tính return qua missing date mà không hiểu khoảng nắm giữ.</li>
-              <li class="bad">Dùng adjusted và unadjusted price lẫn lộn.</li>
-              <li class="bad">Annualize volatility hoặc VaR khi tần suất dữ liệu không đồng nhất.</li>
+              <li>Hamilton, J. D. (1994). <em>Time Series Analysis</em>.</li>
+              <li>
+                Hyndman, R. J. &amp; Athanasopoulos, G.
+                <em>Forecasting: Principles and Practice</em>.
+              </li>
+              <li>
+                Dickey, D. A. &amp; Fuller, W. A. (1979). Distribution of the
+                estimators for autoregressive time series with a unit root.
+              </li>
+              <li>
+                Kwiatkowski, D. et al. (1992). Testing the null hypothesis of
+                stationarity against the alternative of a unit root.
+              </li>
             </ul>
           </article>
-        </div>
-      </section>
+        </section>
+        <footer class="footer">
+          Time Series Risk Lab · Foundations · Time Series → Returns →
+          Stationarity → Mean Models
+        </footer>
+      </main>
 
-      <section id="stationarity" class="section">
-        <h2 class="section-heading"><span>03.</span> Stationarity</h2>
-        <div class="grid grid-3">
-          <article class="card">
-            <h3 class="question">❓ Vì sao cần biết?</h3>
-            <p>Nhiều kết quả của time-series econometrics dựa trên quá trình ổn định theo thời gian. Non-stationary levels có thể tạo hồi quy giả (spurious regression).</p>
-          </article>
-          <article class="card">
-            <h3 class="idea">💡 Weak stationarity</h3>
-            <p><span class="mini-formula">E[y<sub>t</sub>] = μ</span>, <span class="mini-formula">Var(y<sub>t</sub>) = σ²</span>, và covariance chỉ phụ thuộc độ trễ h, không phụ thuộc thời điểm t.</p>
-          </article>
-          <article class="card">
-            <h3 class="warning">⚠️ Không đồng nghĩa</h3>
-            <p>Stationarity không bảo đảm normality, independence, hay causal relationship. Nó cũng không thay thế kiểm tra structural break.</p>
-          </article>
-        </div>
-        <div class="grid grid-2 callout">
-          <article class="card">
-            <h3>Giả định và phạm vi</h3>
-            <ul class="list">
-              <li>Kiểm tra theo specification đã chọn: constant, trend và lag length ảnh hưởng kết quả.</li>
-              <li>Stationary quanh trend khác stationary quanh mean.</li>
-              <li>Unit root test có power hạn chế trong mẫu nhỏ hoặc khi nghiệm gần 1.</li>
-              <li>Structural break có thể làm test hiểu nhầm chuỗi stationary thành unit root.</li>
-            </ul>
-          </article>
-          <article class="card decision">
-            <h3>Methodology</h3>
-            <ol class="list">
-              <li>Vẽ level và return; kiểm tra frequency, outlier, missing values.</li>
-              <li>Đặt deterministic terms theo lý thuyết dữ liệu.</li>
-              <li>Dùng ADF và KPSS như bằng chứng bổ sung.</li>
-              <li>Kiểm tra ACF và hành vi sau biến đổi.</li>
-              <li>Ghi lại transformation để forecast/risk scale có thể đảo ngược và audit.</li>
-            </ol>
-          </article>
-        </div>
-      </section>
-
-      <section id="tests" class="section">
-        <h2 class="section-heading"><span>04.</span> ADF &amp; KPSS: Evidence, Not a Button</h2>
-        <div class="card table-wrap">
-          <table>
-            <thead><tr><th>Test</th><th>Null hypothesis H<sub>0</sub></th><th>Diễn giải p-value nhỏ</th><th>Điều cần chọn</th></tr></thead>
-            <tbody>
-              <tr><td>Augmented Dickey-Fuller (ADF)</td><td>Có unit root; chuỗi non-stationary.</td><td>Bác bỏ unit root, ủng hộ stationarity theo specification.</td><td>Constant/trend và số lag.</td></tr>
-              <tr><td>KPSS</td><td>Chuỗi stationary quanh level hoặc trend.</td><td>Bác bỏ stationarity theo specification.</td><td>Regression term và bandwidth.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="grid grid-2 callout">
-          <article class="card decision good">
-            <h3>Ma trận quyết định</h3>
-            <table>
-              <thead><tr><th>ADF</th><th>KPSS</th><th>Đọc kết quả</th></tr></thead>
-              <tbody>
-                <tr><td>Bác bỏ H<sub>0</sub></td><td>Không bác bỏ H<sub>0</sub></td><td>Bằng chứng khá nhất quán cho stationarity.</td></tr>
-                <tr><td>Không bác bỏ H<sub>0</sub></td><td>Bác bỏ H<sub>0</sub></td><td>Bằng chứng khá nhất quán cho unit root/non-stationarity.</td></tr>
-                <tr><td colspan="2">Mâu thuẫn</td><td>Kiểm tra trend, lag, break, sample size và economic context; không tự động kết luận.</td></tr>
-              </tbody>
-            </table>
-          </article>
-          <article class="card">
-            <h3>🔍 Diagnostics</h3>
-            <ul class="list">
-              <li>So sánh level, log level, return và sai phân khi phù hợp.</li>
-              <li>Kiểm tra residual autocorrelation sau model mean.</li>
-              <li>Đánh giá sensitivity với reasonable lag/trend specifications.</li>
-              <li>Đánh dấu sự kiện và kiểm tra break trước khi sai phân nhiều lần.</li>
-              <li>Không diễn giải p-value sát ngưỡng như bằng chứng chắc chắn.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section id="differencing" class="section">
-        <h2 class="section-heading"><span>05.</span> Differencing and the Next Model</h2>
-        <div class="grid grid-2">
-          <article class="card">
-            <h3>📐 Biến đổi thường dùng</h3>
-            <p>First difference:</p>
-            <div class="formula">Δy<sub>t</sub> = y<sub>t</sub> − y<sub>t-1</sub></div>
-            <p>Seasonal difference với chu kỳ s:</p>
-            <div class="formula">Δ<sub>s</sub>y<sub>t</sub> = y<sub>t</sub> − y<sub>t-s</sub></div>
-            <p class="muted">Với log price, first difference xấp xỉ log return.</p>
-          </article>
-          <article class="card">
-            <h3>⚖️ Model selection</h3>
-            <ul class="list">
-              <li><strong>Stationary level:</strong> model trực tiếp level nếu ý nghĩa kinh tế phù hợp.</li>
-              <li><strong>Unit root:</strong> cân nhắc first difference hoặc return.</li>
-              <li><strong>Common stochastic trend:</strong> kiểm tra cointegration trước khi sai phân toàn bộ; VECM có thể bảo toàn quan hệ dài hạn.</li>
-              <li><strong>Trend-stationary:</strong> detrending có thể phù hợp hơn differencing.</li>
-            </ul>
-          </article>
-        </div>
-        <div class="grid grid-2 callout">
-          <article class="card decision risk">
-            <h3>⚠️ Over-differencing</h3>
-            <p>Sai phân quá mức có thể đưa MA behavior giả tạo, khuếch đại noise và làm mất long-run information. Dừng khi bằng chứng và mục tiêu model cho thấy transformation là đủ.</p>
-          </article>
-          <article class="card">
-            <h3>📊 Validation &amp; risk use</h3>
-            <p>Transformation phải được cố định chỉ từ information available tại thời điểm forecast. Đánh giá forecast trên out-of-sample window; với risk, giữ nhất quán giữa return horizon, volatility forecast, VaR/ES horizon và backtest exceptions.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="section grid grid-2">
-        <article class="card lesson-links">
-          <h3>🐍 Python notebooks</h3>
-          <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/01_foundations/stationarity/adf.ipynb">Mở notebook ADF →</a>
-          <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/01_foundations/stationarity/kpss.ipynb">Mở notebook KPSS →</a>
-          <a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/01_foundations/stationarity/differencing.ipynb">Mở notebook Differencing →</a>
+      <aside class="rightbar">
+        <article class="card">
+          <h3>🎯 Learning outcome</h3>
+          <p class="muted">
+            Xác định đúng series, chọn return convention, đánh giá stationarity
+            và ghi nhận transformation trước khi fit model.
+          </p>
         </article>
         <article class="card">
-          <h3>📚 References</h3>
+          <h3>Checklist trước model</h3>
           <ul class="list">
-            <li>Hamilton, J. D. (1994). <em>Time Series Analysis</em>.</li>
-            <li>Hyndman, R. J. &amp; Athanasopoulos, G. <em>Forecasting: Principles and Practice</em>.</li>
-            <li>Dickey, D. A. &amp; Fuller, W. A. (1979). Distribution of the estimators for autoregressive time series with a unit root.</li>
-            <li>Kwiatkowski, D. et al. (1992). Testing the null hypothesis of stationarity against the alternative of a unit root.</li>
+            <li>Frequency rõ ràng</li>
+            <li>Price adjustment rõ ràng</li>
+            <li>Return convention nhất quán</li>
+            <li>ADF + KPSS được diễn giải</li>
+            <li>Break/trend được xem xét</li>
           </ul>
         </article>
-      </section>
-      <footer class="footer">Time Series Risk Lab · Foundations · Time Series → Returns → Stationarity → Mean Models</footer>
-    </main>
-
-    <aside class="rightbar">
-      <article class="card">
-        <h3>🎯 Learning outcome</h3>
-        <p class="muted">Xác định đúng series, chọn return convention, đánh giá stationarity và ghi nhận transformation trước khi fit model.</p>
-      </article>
-      <article class="card">
-        <h3>Checklist trước model</h3>
-        <ul class="list">
-          <li>Frequency rõ ràng</li>
-          <li>Price adjustment rõ ràng</li>
-          <li>Return convention nhất quán</li>
-          <li>ADF + KPSS được diễn giải</li>
-          <li>Break/trend được xem xét</li>
-        </ul>
-      </article>
-      <article class="card">
-        <h3>Giới hạn</h3>
-        <p class="muted">Không có test đơn lẻ nào xác nhận “chuỗi tốt để model”. Kết luận phụ thuộc dữ liệu, specification, mục tiêu và stable regime trong tương lai.</p>
-      </article>
-    </aside>
-  </div>
-  <script>
-    (() => {
-      const byId = id => document.getElementById(id);
-      const start = byId("start-price");
-      const end = byId("end-price");
-      const updateReturns = () => {
-        const startPrice = Number(start.value);
-        const endPrice = Number(end.value);
-        if (!(startPrice > 0) || !(endPrice > 0)) return;
-        const simple = endPrice / startPrice - 1;
-        const log = Math.log(endPrice / startPrice);
-        byId("start-price-value").textContent = startPrice.toFixed(2);
-        byId("end-price-value").textContent = endPrice.toFixed(2);
-        byId("simple-return").textContent = `${(simple * 100).toFixed(2)}%`;
-        byId("log-return").textContent = `${(log * 100).toFixed(2)}%`;
-      };
-      start.addEventListener("input", updateReturns);
-      end.addEventListener("input", updateReturns);
-      const menu = document.querySelector(".mobile-menu");
-      menu.addEventListener("click", () => document.querySelector(".sidebar").classList.toggle("open"));
-    })();
-  </script>
-  <script src="../assets/js/module-tabs.js"></script>
-</body>
+        <article class="card">
+          <h3>Giới hạn</h3>
+          <p class="muted">
+            Không có test đơn lẻ nào xác nhận “chuỗi tốt để model”. Kết luận phụ
+            thuộc dữ liệu, specification, mục tiêu và stable regime trong tương
+            lai.
+          </p>
+        </article>
+      </aside>
+    </div>
+    <script>
+      (() => {
+        const byId = (id) => document.getElementById(id);
+        const start = byId("start-price");
+        const end = byId("end-price");
+        const updateReturns = () => {
+          const startPrice = Number(start.value);
+          const endPrice = Number(end.value);
+          if (!(startPrice > 0) || !(endPrice > 0)) return;
+          const simple = endPrice / startPrice - 1;
+          const log = Math.log(endPrice / startPrice);
+          byId("start-price-value").textContent = startPrice.toFixed(2);
+          byId("end-price-value").textContent = endPrice.toFixed(2);
+          byId("simple-return").textContent = `${(simple * 100).toFixed(2)}%`;
+          byId("log-return").textContent = `${(log * 100).toFixed(2)}%`;
+        };
+        start.addEventListener("input", updateReturns);
+        end.addEventListener("input", updateReturns);
+        const menu = document.querySelector(".mobile-menu");
+        menu.addEventListener("click", () =>
+          document.querySelector(".sidebar").classList.toggle("open"),
+        );
+      })();
+    </script>
+    <script src="../assets/js/module-tabs.js"></script>
+  </body>
 </html>
