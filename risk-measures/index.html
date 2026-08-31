@@ -1,1 +1,450 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Value at Risk, Expected Shortfall, estimation methods, backtesting, and risk interpretation."><title>Risk Measures | Time Series Risk Lab</title><link rel="stylesheet" href="../assets/css/lab.css"><style>.nav-note{color:var(--muted);font-size:12px;padding:0 10px}.section{scroll-margin-top:18px;margin-top:28px}.section-heading{margin:0 0 14px;font-size:22px}.section-heading span{color:var(--cyan)}.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid var(--border);padding:9px 8px;text-align:left;vertical-align:top}th{color:#c4b5fd;font-size:12px}.decision{border-left:3px solid var(--accent)}.good{border-left-color:var(--green)}.warn{border-left-color:var(--yellow)}.risk{border-left-color:var(--red)}.callout{margin-top:14px}.lesson-links a{display:block;margin:8px 0}.mini-formula{font:18px/1.5 "Cambria Math",serif;color:#ddd6fe}.flow{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}.flow>span{padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:#0b1728}.flow .arrow{border:0;background:transparent;color:var(--muted);padding:8px 0}@media(max-width:760px){.section-heading{font-size:20px}}</style></head><body><div class="app"><aside class="sidebar"><a class="brand" href="../index.html" aria-label="Time Series Risk Lab home"><div class="brand-mark">〽</div><div><h1>TIME SERIES <span>RISK LAB</span></h1><small>Econometrics • Volatility • VaR</small></div></a><nav class="nav" aria-label="Risk Measures navigation"><div class="nav-group"><div class="nav-title">RISK MEASURES</div><a class="active" href="#var">Value at Risk</a><a href="#methods">VaR methods</a><a href="#es">Expected Shortfall</a><a href="#backtesting">Backtesting</a><a href="#governance">Risk use &amp; limitations</a></div><div class="nav-group"><div class="nav-title">LEARNING PATH</div><a href="../volatility-models/">Volatility Models</a><a href="../multivariate/">Multivariate</a><span class="nav-note">Advanced Risk · coming next</span></div></nav></aside><main class="main"><div class="topbar"><button class="btn mobile-menu" aria-label="Mở điều hướng">☰</button><div class="crumb"><a href="../index.html" style="color:inherit;text-decoration:none">Time Series Risk Lab</a> › <a href="../index.html#model-map" style="color:inherit;text-decoration:none">Model Map</a> › Risk Measures</div><a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/tree/main/notebooks/05_risk-measures/value-at-risk">⌘ Notebooks</a></div><header class="hero"><div><div class="tag">PHASE 5 · RISK MEASURES</div><h2>Value at Risk &amp; Expected Shortfall</h2><p>Chuyển return distribution và volatility forecast thành ngưỡng loss có thể quản trị và kiểm chứng.</p></div></header><section class="grid grid-3"><article class="card"><h3 class="question">❓ Câu hỏi trung tâm</h3><p>Tại confidence level và holding horizon đã định, portfolio có thể mất bao nhiêu trong điều kiện thị trường thông thường?</p></article><article class="card"><h3 class="idea">💡 Key idea</h3><p>VaR là quantile loss; ES là average loss trong vùng vượt VaR. Cả hai là forecast, không phải loss limit bảo đảm.</p></article><article class="card"><h3 class="warning">⚠️ Convention first</h3><p>Phải cố định sign, currency, confidence, holding period, portfolio snapshot và information cutoff trước khi so sánh risk number.</p></article></section><section id="var" class="section"><h2 class="section-heading"><span>01.</span> Value at Risk (VaR)</h2><div class="grid grid-2"><article class="card"><h3>📐 Loss quantile</h3><div class="formula">P(L<sub>t+1</sub> &gt; VaR<sub>α,t</sub> | ℱ<sub>t</sub>) = 1 − α</div><p>Với <span class="mini-formula">L</span> là loss dương và <span class="mini-formula">α</span> là confidence level, VaR 99% một ngày là loss threshold chỉ bị vượt khoảng 1% ngày, nếu model calibrated đúng.</p></article><article class="card"><h3>Diễn giải đúng</h3><ul class="list"><li>VaR không nói mức lỗ khi threshold bị vượt.</li><li>99% VaR không có nghĩa “mất tối đa 1% thời gian”.</li><li>VaR phụ thuộc horizon, confidence, data window và distribution assumption.</li><li>Không cộng VaR các desk một cách máy móc; diversification cần joint distribution.</li></ul></article></div><div class="card decision warn callout"><h3>Risk language</h3><p>Ví dụ “one-day 99% VaR = 1 triệu” phải được đọc là: theo model và portfolio hiện tại, 1 triệu là quantile loss 99% cho một ngày. Nó không mô tả extreme tail beyond that threshold, liquidity liquidation loss, hay stress loss.</p></div></section><section id="methods" class="section"><h2 class="section-heading"><span>02.</span> VaR methods</h2><div class="card table-wrap"><table><thead><tr><th>Method</th><th>Ý tưởng</th><th>Khi hữu ích</th><th>Giới hạn chính</th></tr></thead><tbody><tr><td>Historical simulation</td><td>Quantile của realized historical P&amp;L/returns.</td><td>Ít distribution assumption, dễ audit.</td><td>Window phụ thuộc mạnh; quá khứ có thể không chứa stress tương lai.</td></tr><tr><td>Parametric</td><td>Quantile từ assumed distribution và covariance/volatility estimate.</td><td>Nhanh, scale tốt với linear portfolio.</td><td>Sai distribution hoặc constant volatility làm tail risk lệch.</td></tr><tr><td>GARCH VaR</td><td>Conditional volatility forecast kết hợp innovation distribution.</td><td>Volatility clustering rõ, cần time-varying risk.</td><td>Nhạy với specification, estimation và tail distribution.</td></tr></tbody></table></div></section><section id="es" class="section"><h2 class="section-heading"><span>03.</span> Expected Shortfall (ES)</h2><div class="grid grid-2"><article class="card"><h3>📐 Average tail loss</h3><div class="formula">ES<sub>α,t</sub> = E[L<sub>t+1</sub> | L<sub>t+1</sub> &gt; VaR<sub>α,t</sub>, ℱ<sub>t</sub>]</div><p>ES trả lời câu hỏi VaR bỏ ngỏ: nếu đã vượt threshold, mức loss trung bình kỳ vọng là bao nhiêu?</p></article><article class="card"><h3>VaR và ES</h3><table><thead><tr><th>Measure</th><th>Strength</th><th>Limitation</th></tr></thead><tbody><tr><td>VaR</td><td>Dễ truyền đạt và backtest exception frequency.</td><td>Không phản ánh severity beyond quantile.</td></tr><tr><td>ES</td><td>Nhạy với tail severity.</td><td>Khó estimate/backtest hơn; phụ thuộc ít observations trong tail.</td></tr></tbody></table></article></div></section><section id="backtesting" class="section"><h2 class="section-heading"><span>04.</span> Backtesting and validation</h2><div class="grid grid-3"><article class="card"><h3>Coverage</h3><p>Exception rate có gần <span class="mini-formula">1 − α</span> không? Quá nhiều hoặc quá ít exceptions đều cho thấy calibration issue hoặc data/regime issue.</p></article><article class="card"><h3>Independence</h3><p>Exceptions có cluster không? Cluster có thể báo volatility dynamics hoặc regime shift chưa được nắm bắt.</p></article><article class="card"><h3>Severity</h3><p>Với ES và tail use, xem cả size của exceptions. Một model có coverage tốt vẫn có thể đánh giá thấp tail loss.</p></article></div></section><section id="governance" class="section"><h2 class="section-heading"><span>05.</span> Risk use &amp; limitations</h2><div class="grid grid-2"><article class="card"><h3>💰 Decision use</h3><div class="flow"><span>Position &amp; factors</span><span class="arrow">→</span><span>Distribution forecast</span><span class="arrow">→</span><span>VaR / ES</span><span class="arrow">→</span><span>Limit decision</span></div></article><article class="card"><h3>⚠️ Common mistakes</h3><ul class="list"><li class="bad">So sánh VaR khác horizon/confidence như cùng một measure.</li><li class="bad">Dùng VaR/ES như stress-test replacement.</li><li class="bad">Chỉ đếm exception mà không điều tra clustering/severity.</li></ul></article></div></section><section class="section grid grid-2"><article class="card lesson-links"><h3>🐍 Python notebooks</h3><a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/05_risk-measures/value-at-risk/historical_var.ipynb">Mở notebook Historical VaR →</a><a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/05_risk-measures/value-at-risk/parametric_var.ipynb">Mở notebook Parametric VaR →</a><a class="btn" href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/05_risk-measures/value-at-risk/garch_var.ipynb">Mở notebook GARCH VaR →</a></article><article class="card"><h3>📚 References</h3><ul class="list"><li>Jorion, P. <em>Value at Risk</em>.</li><li>McNeil, A., Frey, R. &amp; Embrechts, P. <em>Quantitative Risk Management</em>.</li><li>Basel Committee (2019). <em>Minimum capital requirements for market risk</em>.</li></ul></article></section><footer class="footer">Time Series Risk Lab · Risk Measures · Forecast, explain, validate, and challenge</footer></main><aside class="rightbar"><article class="card"><h3>🎯 Learning outcome</h3><p class="muted">Tính và diễn giải VaR/ES với assumption, validation và limitation phù hợp risk use.</p></article><article class="card"><h3>Minimum reporting</h3><ul class="list"><li>Portfolio scope</li><li>Horizon &amp; confidence</li><li>Method &amp; data window</li><li>VaR/ES and change drivers</li><li>Exceptions &amp; limitations</li></ul></article><article class="card"><h3>Beyond this module</h3><p class="muted">Stress testing, scenario analysis, liquidity risk và governance xử lý những failure mode không thể rút gọn thành một quantile forecast.</p></article></aside></div><script>document.querySelector(".mobile-menu").addEventListener("click",()=>document.querySelector(".sidebar").classList.toggle("open"));</script><script src="../assets/js/module-tabs.js"></script></body></html>
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Value at Risk, Expected Shortfall, estimation methods, backtesting, and risk interpretation."
+    />
+    <title>Risk Measures | Time Series Risk Lab</title>
+    <link rel="stylesheet" href="../assets/css/lab.css" />
+    <style>
+      .nav-note {
+        color: var(--muted);
+        font-size: 12px;
+        padding: 0 10px;
+      }
+      .section {
+        scroll-margin-top: 18px;
+        margin-top: 28px;
+      }
+      .section-heading {
+        margin: 0 0 14px;
+        font-size: 22px;
+      }
+      .section-heading span {
+        color: var(--cyan);
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border-bottom: 1px solid var(--border);
+        padding: 9px 8px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        color: #c4b5fd;
+        font-size: 12px;
+      }
+      .decision {
+        border-left: 3px solid var(--accent);
+      }
+      .good {
+        border-left-color: var(--green);
+      }
+      .warn {
+        border-left-color: var(--yellow);
+      }
+      .risk {
+        border-left-color: var(--red);
+      }
+      .callout {
+        margin-top: 14px;
+      }
+      .lesson-links a {
+        display: block;
+        margin: 8px 0;
+      }
+      .mini-formula {
+        font:
+          18px/1.5 "Cambria Math",
+          serif;
+        color: #ddd6fe;
+      }
+      .flow {
+        display: flex;
+        gap: 8px;
+        align-items: stretch;
+        flex-wrap: wrap;
+      }
+      .flow > span {
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #0b1728;
+      }
+      .flow .arrow {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        padding: 8px 0;
+      }
+      @media (max-width: 760px) {
+        .section-heading {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <a
+          class="brand"
+          href="../index.html"
+          aria-label="Time Series Risk Lab home"
+          ><div class="brand-mark">〽</div>
+          <div>
+            <h1>TIME SERIES <span>RISK LAB</span></h1>
+            <small>Econometrics • Volatility • VaR</small>
+          </div></a
+        >
+        <nav class="nav" aria-label="Risk Measures navigation">
+          <div class="nav-group">
+            <div class="nav-title">RISK MEASURES</div>
+            <a class="active" href="#var">Value at Risk</a
+            ><a href="#methods">VaR methods</a
+            ><a href="#es">Expected Shortfall</a
+            ><a href="#backtesting">Backtesting</a
+            ><a href="#governance">Risk use &amp; limitations</a>
+          </div>
+          <div class="nav-group">
+            <div class="nav-title">LEARNING PATH</div>
+            <a href="../volatility-models/">Volatility Models</a
+            ><a href="../multivariate/">Multivariate</a
+            ><span class="nav-note">Advanced Risk · coming next</span>
+          </div>
+        </nav>
+      </aside>
+      <main class="main">
+        <div class="topbar">
+          <button class="btn mobile-menu" aria-label="Mở điều hướng">☰</button>
+          <div class="crumb">
+            <a
+              href="../index.html"
+              style="color: inherit; text-decoration: none"
+              >Time Series Risk Lab</a
+            >
+            ›
+            <a
+              href="../index.html#model-map"
+              style="color: inherit; text-decoration: none"
+              >Model Map</a
+            >
+            › Risk Measures
+          </div>
+          <a
+            class="btn"
+            href="https://github.com/nguyenngocbinh/time-series-risk/tree/main/notebooks/05_risk-measures/value-at-risk"
+            >⌘ Notebooks</a
+          >
+        </div>
+        <header class="hero">
+          <div>
+            <div class="tag">PHASE 5 · RISK MEASURES</div>
+            <h2>Value at Risk &amp; Expected Shortfall</h2>
+            <p>
+              Chuyển return distribution và volatility forecast thành ngưỡng
+              loss có thể quản trị và kiểm chứng.
+            </p>
+          </div>
+        </header>
+        <section class="grid grid-3">
+          <article class="card">
+            <h3 class="question">❓ Câu hỏi trung tâm</h3>
+            <p>
+              Tại confidence level và holding horizon đã định, portfolio có thể
+              mất bao nhiêu trong điều kiện thị trường thông thường?
+            </p>
+          </article>
+          <article class="card">
+            <h3 class="idea">💡 Key idea</h3>
+            <p>
+              VaR là quantile loss; ES là average loss trong vùng vượt VaR. Cả
+              hai là forecast, không phải loss limit bảo đảm.
+            </p>
+          </article>
+          <article class="card">
+            <h3 class="warning">⚠️ Convention first</h3>
+            <p>
+              Phải cố định sign, currency, confidence, holding period, portfolio
+              snapshot và information cutoff trước khi so sánh risk number.
+            </p>
+          </article>
+        </section>
+        <section id="var" class="section">
+          <h2 class="section-heading"><span>01.</span> Value at Risk (VaR)</h2>
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>📐 Loss quantile</h3>
+              <div class="formula">
+                P(L<sub>t+1</sub> &gt; VaR<sub>α,t</sub> | ℱ<sub>t</sub>) = 1 −
+                α
+              </div>
+              <p>
+                Với <span class="mini-formula">L</span> là loss dương và
+                <span class="mini-formula">α</span> là confidence level, VaR 99%
+                một ngày là loss threshold chỉ bị vượt khoảng 1% ngày, nếu model
+                calibrated đúng.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Diễn giải đúng</h3>
+              <ul class="list">
+                <li>VaR không nói mức lỗ khi threshold bị vượt.</li>
+                <li>99% VaR không có nghĩa “mất tối đa 1% thời gian”.</li>
+                <li>
+                  VaR phụ thuộc horizon, confidence, data window và distribution
+                  assumption.
+                </li>
+                <li>
+                  Không cộng VaR các desk một cách máy móc; diversification cần
+                  joint distribution.
+                </li>
+              </ul>
+            </article>
+          </div>
+          <div class="card decision warn callout">
+            <h3>Risk language</h3>
+            <p>
+              Ví dụ “one-day 99% VaR = 1 triệu” phải được đọc là: theo model và
+              portfolio hiện tại, 1 triệu là quantile loss 99% cho một ngày. Nó
+              không mô tả extreme tail beyond that threshold, liquidity
+              liquidation loss, hay stress loss.
+            </p>
+          </div>
+        </section>
+        <section id="methods" class="section">
+          <h2 class="section-heading"><span>02.</span> VaR methods</h2>
+          <div class="card table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Ý tưởng</th>
+                  <th>Khi hữu ích</th>
+                  <th>Giới hạn chính</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Historical simulation</td>
+                  <td>Quantile của realized historical P&amp;L/returns.</td>
+                  <td>Ít distribution assumption, dễ audit.</td>
+                  <td>
+                    Window phụ thuộc mạnh; quá khứ có thể không chứa stress
+                    tương lai.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Parametric</td>
+                  <td>
+                    Quantile từ assumed distribution và covariance/volatility
+                    estimate.
+                  </td>
+                  <td>Nhanh, scale tốt với linear portfolio.</td>
+                  <td>
+                    Sai distribution hoặc constant volatility làm tail risk
+                    lệch.
+                  </td>
+                </tr>
+                <tr>
+                  <td>GARCH VaR</td>
+                  <td>
+                    Conditional volatility forecast kết hợp innovation
+                    distribution.
+                  </td>
+                  <td>Volatility clustering rõ, cần time-varying risk.</td>
+                  <td>
+                    Nhạy với specification, estimation và tail distribution.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="es" class="section">
+          <h2 class="section-heading">
+            <span>03.</span> Expected Shortfall (ES)
+          </h2>
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>📐 Average tail loss</h3>
+              <div class="formula">
+                ES<sub>α,t</sub> = E[L<sub>t+1</sub> | L<sub>t+1</sub> &gt;
+                VaR<sub>α,t</sub>, ℱ<sub>t</sub>]
+              </div>
+              <p>
+                ES trả lời câu hỏi VaR bỏ ngỏ: nếu đã vượt threshold, mức loss
+                trung bình kỳ vọng là bao nhiêu?
+              </p>
+            </article>
+            <article class="card">
+              <h3>VaR và ES</h3>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Measure</th>
+                    <th>Strength</th>
+                    <th>Limitation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>VaR</td>
+                    <td>Dễ truyền đạt và backtest exception frequency.</td>
+                    <td>Không phản ánh severity beyond quantile.</td>
+                  </tr>
+                  <tr>
+                    <td>ES</td>
+                    <td>Nhạy với tail severity.</td>
+                    <td>
+                      Khó estimate/backtest hơn; phụ thuộc ít observations trong
+                      tail.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </article>
+          </div>
+        </section>
+        <section id="backtesting" class="section">
+          <h2 class="section-heading">
+            <span>04.</span> Backtesting and validation
+          </h2>
+          <div class="grid grid-3">
+            <article class="card">
+              <h3>Coverage</h3>
+              <p>
+                Exception rate có gần
+                <span class="mini-formula">1 − α</span> không? Quá nhiều hoặc
+                quá ít exceptions đều cho thấy calibration issue hoặc
+                data/regime issue.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Independence</h3>
+              <p>
+                Exceptions có cluster không? Cluster có thể báo volatility
+                dynamics hoặc regime shift chưa được nắm bắt.
+              </p>
+            </article>
+            <article class="card">
+              <h3>Severity</h3>
+              <p>
+                Với ES và tail use, xem cả size của exceptions. Một model có
+                coverage tốt vẫn có thể đánh giá thấp tail loss.
+              </p>
+            </article>
+          </div>
+        </section>
+        <section id="governance" class="section">
+          <h2 class="section-heading">
+            <span>05.</span> Risk use &amp; limitations
+          </h2>
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>💰 Decision use</h3>
+              <div class="flow">
+                <span>Position &amp; factors</span><span class="arrow">→</span
+                ><span>Distribution forecast</span><span class="arrow">→</span
+                ><span>VaR / ES</span><span class="arrow">→</span
+                ><span>Limit decision</span>
+              </div>
+            </article>
+            <article class="card">
+              <h3>⚠️ Common mistakes</h3>
+              <ul class="list">
+                <li class="bad">
+                  So sánh VaR khác horizon/confidence như cùng một measure.
+                </li>
+                <li class="bad">Dùng VaR/ES như stress-test replacement.</li>
+                <li class="bad">
+                  Chỉ đếm exception mà không điều tra clustering/severity.
+                </li>
+              </ul>
+            </article>
+          </div>
+        </section>
+        <section class="section grid grid-2">
+          <article class="card lesson-links">
+            <h3>🐍 Python notebooks</h3>
+            <a
+              class="btn"
+              href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/05_risk-measures/value-at-risk/historical_var.ipynb"
+              >Mở notebook Historical VaR →</a
+            ><a
+              class="btn"
+              href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/05_risk-measures/value-at-risk/parametric_var.ipynb"
+              >Mở notebook Parametric VaR →</a
+            ><a
+              class="btn"
+              href="https://github.com/nguyenngocbinh/time-series-risk/blob/main/notebooks/05_risk-measures/value-at-risk/garch_var.ipynb"
+              >Mở notebook GARCH VaR →</a
+            >
+          </article>
+          <article class="card">
+            <h3>📚 References</h3>
+            <ul class="list">
+              <li>Jorion, P. <em>Value at Risk</em>.</li>
+              <li>
+                McNeil, A., Frey, R. &amp; Embrechts, P.
+                <em>Quantitative Risk Management</em>.
+              </li>
+              <li>
+                Basel Committee (2019).
+                <em>Minimum capital requirements for market risk</em>.
+              </li>
+            </ul>
+          </article>
+        </section>
+        <footer class="footer">
+          Time Series Risk Lab · Risk Measures · Forecast, explain, validate,
+          and challenge
+        </footer>
+      </main>
+      <aside class="rightbar">
+        <article class="card">
+          <h3>🎯 Learning outcome</h3>
+          <p class="muted">
+            Tính và diễn giải VaR/ES với assumption, validation và limitation
+            phù hợp risk use.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Minimum reporting</h3>
+          <ul class="list">
+            <li>Portfolio scope</li>
+            <li>Horizon &amp; confidence</li>
+            <li>Method &amp; data window</li>
+            <li>VaR/ES and change drivers</li>
+            <li>Exceptions &amp; limitations</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Beyond this module</h3>
+          <p class="muted">
+            Stress testing, scenario analysis, liquidity risk và governance xử
+            lý những failure mode không thể rút gọn thành một quantile forecast.
+          </p>
+        </article>
+      </aside>
+    </div>
+    <script>
+      document
+        .querySelector(".mobile-menu")
+        .addEventListener("click", () =>
+          document.querySelector(".sidebar").classList.toggle("open"),
+        );
+    </script>
+    <script src="../assets/js/module-tabs.js"></script>
+  </body>
+</html>
