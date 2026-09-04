@@ -91,7 +91,7 @@
       }
       .slider-row {
         display: grid;
-        grid-template-columns: 28px minmax(0, 1fr auto) auto;
+        grid-template-columns: 28px minmax(0, 1fr) auto;
         align-items: center;
         gap: 10px;
         margin: 10px 0;
@@ -113,22 +113,40 @@
       }
       .plot {
         margin-top: 14px;
+        height: 240px;
       }
       .plot canvas {
         width: 100%;
-        height: 240px;
+        height: 100%;
         display: block;
+      }
+      .parameter-legend {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .parameter-chip {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #0b1728;
+        padding: 8px 10px;
+      }
+      .parameter-chip strong {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 2px;
       }
       @media (max-width: 760px) {
         .section-heading {
           font-size: 20px;
         }
         .slider-row {
-          grid-template-columns: 28px 1fr;
+          grid-template-columns: 28px 1fr auto;
         }
-        .slider-row output {
-          grid-column: 2;
-          justify-self: end;
+        .parameter-legend {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -333,39 +351,56 @@
               </ul>
             </article>
             <article class="card">
-              <h3>🎛️ Trực quan: α và β</h3>
+              <h3>🎛️ Trực quan: &alpha; và &beta;</h3>
               <div class="slider-row">
-                <label for="alpha">α</label
-                ><input
+                <label for="alpha" aria-label="alpha">&alpha;</label>
+                <input
                   id="alpha"
                   type="range"
                   min="0.01"
                   max="0.50"
                   step="0.01"
                   value="0.10"
-                /><output id="alphaValue">0.10</output>
+                />
+                <output id="alphaValue">0.10</output>
               </div>
               <div class="slider-row">
-                <label for="beta">β</label
-                ><input
+                <label for="beta" aria-label="beta">&beta;</label>
+                <input
                   id="beta"
                   type="range"
                   min="0.50"
                   max="0.98"
                   step="0.01"
                   value="0.85"
-                /><output id="betaValue">0.85</output>
+                />
+                <output id="betaValue">0.85</output>
               </div>
               <div class="slider-row">
-                <label for="omega">ω</label
-                ><input
+                <label for="omega" aria-label="omega">&omega;</label>
+                <input
                   id="omega"
                   type="range"
                   min="0.00001"
                   max="0.00100"
                   step="0.00001"
                   value="0.00001"
-                /><output id="omegaValue">0.00001</output>
+                />
+                <output id="omegaValue">0.00001</output>
+              </div>
+              <div class="parameter-legend">
+                <div class="parameter-chip">
+                  <strong>NEWS EFFECT · &alpha;</strong>
+                  <span>Shock mới → volatility</span>
+                </div>
+                <div class="parameter-chip">
+                  <strong>PERSISTENCE · &beta;</strong>
+                  <span>Volatility cũ → volatility hiện tại</span>
+                </div>
+                <div class="parameter-chip">
+                  <strong>BASELINE · &omega;</strong>
+                  <span>Mức variance nền</span>
+                </div>
               </div>
               <div class="plot">
                 <canvas
@@ -374,8 +409,8 @@
                 ></canvas>
               </div>
               <p class="muted">
-                Persistence α + β = <strong id="persistence">0.95</strong>. Giá
-                trị gần 1 khiến shock mất nhiều thời gian hơn để tiêu tan.
+                Persistence &alpha; + &beta; = <strong id="persistence">0.95</strong>.
+                Giá trị gần 1 khiến shock mất nhiều thời gian hơn để tiêu tan.
               </p>
             </article>
           </div>
@@ -611,6 +646,111 @@
         .addEventListener("click", () =>
           document.querySelector(".sidebar").classList.toggle("open"),
         );
+
+      (() => {
+        const alpha = document.getElementById("alpha");
+        const beta = document.getElementById("beta");
+        const omega = document.getElementById("omega");
+        const alphaValue = document.getElementById("alphaValue");
+        const betaValue = document.getElementById("betaValue");
+        const omegaValue = document.getElementById("omegaValue");
+        const persistence = document.getElementById("persistence");
+        const canvas = document.getElementById("volChart");
+
+        if (!alpha || !beta || !omega || !canvas) return;
+
+        const ctx = canvas.getContext("2d");
+        const shocks = [
+          0.03, -0.07, 0.04, 0.02, -0.16, 0.06, 0.01, 0.11, -0.04, 0.03,
+          -0.02, 0.18, -0.06, 0.02, 0.01, -0.10, 0.05, 0.02, 0.08, -0.03,
+          0.01, -0.14, 0.04, 0.02, -0.05, 0.03, 0.07, -0.02, 0.01, 0.05,
+        ];
+
+        const resizeCanvas = () => {
+          const rect = canvas.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          canvas.width = Math.max(1, Math.round(rect.width * dpr));
+          canvas.height = Math.max(1, Math.round(rect.height * dpr));
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+
+        const draw = () => {
+          const a = Number(alpha.value);
+          const b = Number(beta.value);
+          const w = Number(omega.value);
+          const total = a + b;
+
+          alphaValue.textContent = a.toFixed(2);
+          betaValue.textContent = b.toFixed(2);
+          omegaValue.textContent = w.toFixed(5);
+          persistence.textContent = total.toFixed(2);
+
+          const width = canvas.clientWidth;
+          const height = canvas.clientHeight;
+          ctx.clearRect(0, 0, width, height);
+
+          const pad = { left: 34, right: 12, top: 14, bottom: 24 };
+          const plotWidth = width - pad.left - pad.right;
+          const plotHeight = height - pad.top - pad.bottom;
+
+          let variance = total < 0.999 ? w / Math.max(0.001, 1 - total) : w;
+          const vols = [];
+          for (const shock of shocks) {
+            variance = w + a * shock * shock + b * variance;
+            vols.push(Math.sqrt(Math.max(variance, 0)));
+          }
+
+          const maxValue = Math.max(...vols, 0.001) * 1.15;
+
+          ctx.font = "11px Inter, system-ui, sans-serif";
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = "rgba(148,163,184,.16)";
+          ctx.fillStyle = "rgba(148,163,184,.7)";
+
+          for (let i = 0; i <= 3; i += 1) {
+            const y = pad.top + (plotHeight * i) / 3;
+            ctx.beginPath();
+            ctx.moveTo(pad.left, y);
+            ctx.lineTo(width - pad.right, y);
+            ctx.stroke();
+            const label = (maxValue * (1 - i / 3)).toFixed(3);
+            ctx.fillText(label, 2, y + 4);
+          }
+
+          ctx.beginPath();
+          vols.forEach((value, index) => {
+            const x = pad.left + (plotWidth * index) / (vols.length - 1);
+            const y = pad.top + plotHeight * (1 - value / maxValue);
+            if (index === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          });
+          ctx.strokeStyle = "#8b5cf6";
+          ctx.lineWidth = 2.5;
+          ctx.stroke();
+
+          vols.forEach((value, index) => {
+            const x = pad.left + (plotWidth * index) / (vols.length - 1);
+            const y = pad.top + plotHeight * (1 - value / maxValue);
+            ctx.beginPath();
+            ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = "#38bdf8";
+            ctx.fill();
+          });
+
+          ctx.fillStyle = "rgba(148,163,184,.7)";
+          ctx.fillText("t−30", pad.left, height - 7);
+          ctx.fillText("t", width - pad.right - 8, height - 7);
+        };
+
+        const redraw = () => {
+          resizeCanvas();
+          draw();
+        };
+
+        [alpha, beta, omega].forEach((input) => input.addEventListener("input", draw));
+        window.addEventListener("resize", redraw);
+        redraw();
+      })();
     </script>
     <script src="../assets/js/module-tabs.js"></script>
   </body>
